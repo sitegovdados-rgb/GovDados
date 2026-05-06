@@ -1,0 +1,170 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink:   #0a0a0a;
+  --paper: #f8f6f1;
+  --rule:  #d0ccc4;
+  --dim:   #6b6560;
+  --mid:   #3a3632;
+  --mark:  #e8e4dc;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--paper); }
+::-webkit-scrollbar-thumb { background: var(--rule); }
+
+/* ── Animações ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.anim-up   { animation: slideUp 0.5s ease forwards; }
+.anim-fade { animation: fadeIn 0.4s ease forwards; }
+
+/* ── Sistema de grid técnico ── */
+
+/* Linha divisória técnica */
+.t-rule {
+  border-top: 1px solid var(--rule);
+}
+.t-rule-bold {
+  border-top: 2px solid var(--ink);
+}
+
+/* Card técnico — sem border-radius, bordas visíveis */
+.t-card {
+  background: white;
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  transition: border-color 0.15s;
+}
+.t-card:hover {
+  border-color: var(--ink);
+}
+
+/* Card destaque — borda esquerda grossa */
+.t-card-marked {
+  background: white;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--ink);
+  border-radius: 0;
+}
+
+/* Label técnico — estilo rótulo de instrumento */
+.t-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+}
+
+/* Tag — estilo carimbo */
+.t-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  background: transparent;
+  display: inline-block;
+  line-height: 1.4;
+}
+
+/* Número grande — display condensado */
+.t-number {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+
+/* Título de seção — condensado pesado */
+.t-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  color: var(--ink);
+}
+
+/* Botão primário — sólido preto */
+.t-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 24px;
+  background: var(--ink);
+  color: var(--paper);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: inline-block;
+  text-align: center;
+}
+.t-btn:hover {
+  background: transparent;
+  color: var(--ink);
+}
+
+/* Botão secundário — contorno */
+.t-btn-outline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: inline-block;
+  text-align: center;
+}
+.t-btn-outline:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* Número de índice — estilo catálogo */
+.t-index {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--dim);
+  letter-spacing: 0.05em;
+}
+
+/* Grid de dados — linhas alternadas */
+.t-row {
+  border-bottom: 1px solid var(--rule);
+  padding: 12px 0;
+}
+.t-row:first-child {
+  border-top: 2px solid var(--ink);
+}
+.t-row:last-child {
+  border-bottom: 2px solid var(--ink);
+}
