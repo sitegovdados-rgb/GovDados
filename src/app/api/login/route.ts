@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-const SENHA_CORRETA = process.env.SITE_SENHA || 'cidadeintegrada@secc'
+const SENHA_CORRETA = process.env.SITE_SENHA
 
 export async function POST(request: NextRequest) {
   const { senha } = await request.json()
