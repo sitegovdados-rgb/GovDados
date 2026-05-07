@@ -38,7 +38,29 @@ export default async function HomePage() {
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1.05rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: 32, maxWidth: 560 }}>
               Dados, indicadores e intervenções do PCI nos territórios do Rio de Janeiro — transparência para gestores, pesquisadores e cidadãos.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+			
+			
+			
+			
+			
+			
+			
+			
+			{/* ── TERRITÓRIOS ──────────────────────────────── */}
+      <section style={{ background: 'var(--pci-light)', borderTop: '1px solid var(--pci-border)', borderBottom: '1px solid var(--pci-border)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-16">
+          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
+            <div>
+              <div className="pci-accent-line" />
+              <h2 className="pci-title" style={{ fontSize: '2rem' }}>Territórios</h2>
+            </div>
+            <Link href="/territorios" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>
+              Ver todos →
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {(territorios.length > 0 ? territorios : [
               { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Gardênia Azul, Rio das Pedras e Corredor do Itanhangá' },
               { nome: 'Manguinhos e Jacarezinho', slug: 'manguinhos-jacarezinho', status: 'em_breve', descricao: 'Território da Zona Norte do Rio de Janeiro' },
@@ -50,7 +72,31 @@ export default async function HomePage() {
                     {t.status === 'ativo' ? 'Ativo' : 'Em breve'}
                   </span>
                 </div>
+                <h3 className="pci-title" style={{ fontSize: '1.1rem', marginBottom: 8 }}>{t.nome}</h3>
+                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.82rem', color: 'var(--pci-dim)', lineHeight: 1.6, marginBottom: 16 }}>
+                  {t.descricao}
+                </p>
+                {t.status === 'ativo' ? (
+                  <Link href={`/territorios/${t.slug}`} className="pci-btn" style={{ fontSize: '0.8rem', padding: '8px 16px' }}>
+                    Explorar território
+                  </Link>
+                ) : (
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'var(--pci-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    Em desenvolvimento
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
+          
+		  
+		  
+		  
+		  
+		  
+		  </div>
         </div>
 
         {/* Métricas no rodapé do hero */}
@@ -114,38 +160,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── TERRITÓRIOS ──────────────────────────────── */}
-      <section style={{ background: 'var(--pci-light)', borderTop: '1px solid var(--pci-border)', borderBottom: '1px solid var(--pci-border)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-            <div>
-              <div className="pci-accent-line" />
-              <h2 className="pci-title" style={{ fontSize: '2rem' }}>Territórios</h2>
-            </div>
-            <Link href="/territorios" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>
-              Ver todos →
-            </Link>
-          </div>
-
-          
-                <h3 className="pci-title" style={{ fontSize: '1.1rem', marginBottom: 8 }}>{t.nome}</h3>
-                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.82rem', color: 'var(--pci-dim)', lineHeight: 1.6, marginBottom: 16 }}>
-                  {t.descricao}
-                </p>
-                {t.status === 'ativo' ? (
-                  <Link href={`/territorios/${t.slug}`} className="pci-btn" style={{ fontSize: '0.8rem', padding: '8px 16px' }}>
-                    Explorar território
-                  </Link>
-                ) : (
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'var(--pci-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                    Em desenvolvimento
-                  </span>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* ── PROGRAMAS SOCIAIS (prévia) ────────────────── */}
       <section className="max-w-7xl mx-auto px-6 py-16">
