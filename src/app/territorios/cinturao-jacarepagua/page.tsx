@@ -47,6 +47,10 @@ export default async function CinturaoPage() {
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
             Conjunto de comunidades na Zona Oeste do Rio de Janeiro, composto por três territórios: Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.
           </p>
+          <p></p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
+            ÁREA DO PLANO DE RETOMADA DE TERRITÓRIOS NO ÂMBITO DA A.D.P.F. 635 DO STF.
+          </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <span className="pci-tag-navy">XVI Região Administrativa</span>
             <span className="pci-tag-navy">Jacarepaguá · Zona Oeste</span>
