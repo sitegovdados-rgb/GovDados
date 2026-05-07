@@ -46,7 +46,7 @@ export default async function HomePage() {
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7 }}>
               Dados, indicadores e intervenções do PCI nos territórios do Rio de Janeiro — transparência para gestores, pesquisadores e cidadãos.
             </p>
-            <p></p>
+            <p> </p>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', lineHeight: 1.7 }}>
               ÁREA DO PLANO DE RETOMADA DE TERRITÓRIOS NO ÂMBITO DA A.D.P.F. 635 DO STF..
             </p>
