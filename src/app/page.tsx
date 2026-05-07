@@ -1,79 +1,73 @@
 import Link from 'next/link'
-import { getTerritorios, getSubTerritorios, getProgramasSociais, getIndicadores } from '@/lib/directus'
+import { getSubTerritorios, getIndicadores, getProgramasSociais, getProgramasUrbanismo, getEquipamentos } from '@/lib/directus'
 
 export const revalidate = 3600
 
-export default async function HomePage() {
-  let territorios: any[] = []
+const TERRITORIO = 'Cinturão de Jacarepaguá'
+
+export default async function CinturaoPage() {
   let subTerritorios: any[] = []
-  let programas: any[] = []
   let indicadores: any[] = []
+  let programas: any[] = []
+  let urbanismo: any[] = []
+  let equipamentos: any[] = []
 
   try {
-    territorios   = await getTerritorios()
-    subTerritorios = await getSubTerritorios('Cinturão de Jacarepaguá')
-    programas     = await getProgramasSociais('Cinturão de Jacarepaguá')
-    indicadores   = await getIndicadores('Cinturão de Jacarepaguá')
+    subTerritorios = await getSubTerritorios(TERRITORIO)
+    indicadores    = await getIndicadores(TERRITORIO)
+    programas      = await getProgramasSociais(TERRITORIO)
+    urbanismo      = await getProgramasUrbanismo(TERRITORIO)
+    equipamentos   = await getEquipamentos(TERRITORIO)
   } catch (e) { console.error(e) }
 
-  const totalBeneficiarios = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
-  const territorioAtivo = territorios.find((t: any) => t.status === 'ativo')
+  const indPopTotal = indicadores.filter((i: any) => i.nome?.includes('Gardênia Azul') || i.nome?.includes('Corredor') || i.nome?.includes('Rio das Pedras'))
+  const totalPop = indPopTotal.filter((i: any) => i.nome?.startsWith('População estimada')).reduce((acc: number, i: any) => acc + (i.valor || 0), 0)
+
+  const tiposEquip = [...new Set(equipamentos.map((e: any) => e.tipo))].sort()
+  const urbanismoExecutado = urbanismo.filter((u: any) => u.status === 'Executado')
+  const urbanismoPlanejado = urbanismo.filter((u: any) => u.status === 'Planejado')
 
   return (
     <div>
-
-      {/* ── HERO ─────────────────────────────────────── */}
-      <section style={{ background: 'linear-gradient(135deg, var(--pci-navy) 0%, #1e3a8a 100%)', color: 'white', position: 'relative', overflow: 'hidden' }}>
-        {/* Decoração geométrica */}
-        <div style={{ position: 'absolute', top: -80, right: -80, width: 400, height: 400, borderRadius: '50%', background: 'rgba(0,168,204,0.08)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -60, right: 100, width: 240, height: 240, borderRadius: '50%', background: 'rgba(0,168,204,0.06)', pointerEvents: 'none' }} />
-
-        <div className="max-w-7xl mx-auto px-6 py-20 md:py-28">
-          <div className="max-w-3xl">
-            <span className="pci-tag-navy mb-6">Governo do Estado do Rio de Janeiro · ADPF 635 · STF</span>
-            <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(2.2rem, 5vw, 3.8rem)', lineHeight: 1.1, marginBottom: 20, marginTop: 16 }}>
-              Painel do Programa<br />
-              <span style={{ color: 'var(--pci-cyan)' }}>Cidade Integrada</span>
-            </h1>
-            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1.05rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: 32, maxWidth: 560 }}>
-              Dados, indicadores e intervenções do PCI nos territórios do Rio de Janeiro — transparência para gestores, pesquisadores e cidadãos.
-            </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <Link href="/territorios/cinturao-jacarepagua" className="pci-btn-white">
-                Explorar Cinturão de Jacarepaguá
-              </Link>
-              <Link href="/painel" style={{
-                fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.875rem',
-                padding: '12px 24px', borderRadius: 8,
-                background: 'rgba(255,255,255,0.1)', color: 'white',
-                border: '2px solid rgba(255,255,255,0.25)',
-                display: 'inline-block', transition: 'all 0.2s',
-              }}>
-                Ver Painel de Dados
-              </Link>
-            </div>
+      {/* Header do território */}
+      <section style={{ background: 'linear-gradient(135deg, var(--pci-navy) 0%, #1e3a8a 100%)', color: 'white', borderBottom: '3px solid var(--pci-cyan)' }}>
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <Link href="/territorios" style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Territórios
+            </Link>
+            <span style={{ color: 'rgba(255,255,255,0.3)' }}>›</span>
+            <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'var(--pci-cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Cinturão de Jacarepaguá
+            </span>
+          </div>
+          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, marginBottom: 12 }}>
+            Cinturão de Jacarepaguá
+          </h1>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
+            Conjunto de comunidades na Zona Oeste do Rio de Janeiro, composto por três sub-territórios: Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <span className="pci-tag-navy">XVI Região Administrativa</span>
+            <span className="pci-tag-navy">Jacarepaguá · Zona Oeste</span>
+            <span className="pci-tag-navy">ADPF 635 · STF</span>
           </div>
         </div>
 
-        {/* Métricas no rodapé do hero */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.15)' }}>
+        {/* Métricas do território */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4">
               {[
-                { n: indicadores.filter((i: any) => i.area_tematica === 'Dados Demográficos').length || '21', label: 'Indicadores', sub: 'sociográficos mapeados' },
-                { n: programas.length || '16', label: 'Programas', sub: 'sociais em andamento' },
-                { n: subTerritorios.length || '3', label: 'Sub-territórios', sub: 'no Cinturão de Jacarepaguá' },
-                { n: totalBeneficiarios > 0 ? (totalBeneficiarios / 1000).toFixed(0) + 'mil+' : '39mil+', label: 'Beneficiários', sub: 'atendidos pelo PCI' },
+                { valor: totalPop > 0 ? totalPop.toLocaleString('pt-BR') : '111.552', label: 'Habitantes', sub: 'Censo IBGE 2022' },
+                { valor: String(subTerritorios.length || 3), label: 'Sub-territórios', sub: 'Gardênia Azul · Rio das Pedras · Corredor Itanhangá' },
+                { valor: String(programas.length || 16), label: 'Programas sociais', sub: 'em andamento e realizados' },
+                { valor: String(urbanismo.length || 18), label: 'Intervenções', sub: 'urbanísticas mapeadas' },
               ].map((item, i) => (
-                <div key={i} style={{
-                  padding: '20px 24px',
-                  borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none',
-                }}>
-                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.8rem', color: 'var(--pci-cyan)', lineHeight: 1, marginBottom: 4 }}>
-                    {item.n}
-                  </p>
-                  <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.8rem', color: 'white', marginBottom: 2 }}>{item.label}</p>
-                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.04em' }}>{item.sub}</p>
+                <div key={i} style={{ padding: '16px 24px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.6rem', color: 'var(--pci-cyan)', lineHeight: 1 }}>{item.valor}</p>
+                  <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem', color: 'white', marginTop: 4 }}>{item.label}</p>
+                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.55rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{item.sub}</p>
                 </div>
               ))}
             </div>
@@ -81,149 +75,127 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── O QUE É O PCI ────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="pci-accent-line" />
-            <h2 className="pci-title" style={{ fontSize: '2rem', marginBottom: 16 }}>O que é o Programa Cidade Integrada</h2>
-            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 16 }}>
-              O <strong>Programa Cidade Integrada</strong> é uma iniciativa do Governo do Estado do Rio de Janeiro que visa a integração entre bairros formais e informais através de investimentos em infraestrutura, melhorias de espaços públicos e garantia de acessibilidade.
-            </p>
-            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 24 }}>
-              O programa atua em territórios historicamente conflagrados no âmbito da <strong>ADPF 635 do STF</strong>, com ações relacionadas ao Plano de Retomada de Territórios, promovendo o novo ordenamento socioterritorial.
-            </p>
-            <Link href="/territorios" className="pci-btn">Ver Territórios</Link>
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-12">
 
-          {/* Eixos de atuação */}
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: '👥', label: 'Social', desc: 'Ações e serviços sociais para a população' },
-              { icon: '💼', label: 'Econômico', desc: 'Geração de renda e inclusão produtiva' },
-              { icon: '🏗️', label: 'Infraestrutura', desc: 'Urbanismo social e obras públicas' },
-              { icon: '🛡️', label: 'Segurança', desc: 'Planejamento e combate ao crime' },
-              { icon: '📊', label: 'Transparência', desc: 'Dados abertos e prestação de contas' },
-              { icon: '🤝', label: 'Diálogo', desc: 'Governança e participação comunitária' },
-            ].map((eixo, i) => (
-              <div key={i} className="pci-card p-4">
-                <span style={{ fontSize: '1.5rem', display: 'block', marginBottom: 8 }}>{eixo.icon}</span>
-                <p style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '0.85rem', color: 'var(--pci-navy)', marginBottom: 4 }}>{eixo.label}</p>
-                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.75rem', color: 'var(--pci-dim)', lineHeight: 1.5 }}>{eixo.desc}</p>
+        {/* Sub-territórios */}
+        <section className="mb-14">
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 6 }}>Sub-territórios</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            Cada sub-território agrupa um conjunto de favelas com características geográficas e históricas próximas.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {subTerritorios.map((st: any) => (
+              <div key={st.slug} className="pci-card p-6">
+                <h3 className="pci-title" style={{ fontSize: '1.1rem', marginBottom: 8 }}>{st.nome}</h3>
+                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.82rem', color: 'var(--pci-dim)', lineHeight: 1.6, marginBottom: 16 }}>
+                  {st.descricao?.substring(0, 150)}...
+                </p>
+                {st.historia && (
+                  <details style={{ cursor: 'pointer' }}>
+                    <summary style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--pci-blue)', marginBottom: 8 }}>
+                      Ver histórico
+                    </summary>
+                    <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.8rem', color: 'var(--pci-dim)', lineHeight: 1.7, marginTop: 8 }}>
+                      {st.historia}
+                    </p>
+                  </details>
+                )}
+                <Link href={`/territorios/cinturao-jacarepagua/${st.slug}`}
+                  style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.8rem', color: 'var(--pci-blue)', display: 'block', marginTop: 16 }}>
+                  Ver sub-território →
+                </Link>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── TERRITÓRIOS ──────────────────────────────── */}
-      <section style={{ background: 'var(--pci-light)', borderTop: '1px solid var(--pci-border)', borderBottom: '1px solid var(--pci-border)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-            <div>
-              <div className="pci-accent-line" />
-              <h2 className="pci-title" style={{ fontSize: '2rem' }}>Territórios</h2>
-            </div>
-            <Link href="/territorios" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>
-              Ver todos →
-            </Link>
-          </div>
-
+        {/* Equipamentos Públicos */}
+        <section className="mb-14">
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 6 }}>Equipamentos Públicos</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            {equipamentos.length} equipamentos públicos mapeados · Fontes: SMS, SME, SMAS 2023
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(territorios.length > 0 ? territorios : [
-              { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Gardênia Azul, Rio das Pedras e Corredor do Itanhangá' },
-              { nome: 'Manguinhos e Jacarezinho', slug: 'manguinhos-jacarezinho', status: 'em_breve', descricao: 'Território da Zona Norte do Rio de Janeiro' },
-              { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'em_breve', descricao: 'Território da Zona Sul do Rio de Janeiro' },
-            ]).map((t: any) => (
-              <div key={t.slug} className="pci-card p-6" style={{ opacity: t.status === 'em_breve' ? 0.65 : 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                  <span className={`badge ${t.status === 'ativo' ? 'badge-green' : 'badge-gray'}`}>
-                    {t.status === 'ativo' ? 'Ativo' : 'Em breve'}
-                  </span>
+            {tiposEquip.map((tipo: any) => {
+              const itens = equipamentos.filter((e: any) => e.tipo === tipo)
+              return (
+                <div key={tipo} className="pci-card p-6">
+                  <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 4 }}>{tipo}</h3>
+                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'var(--pci-muted)', marginBottom: 16 }}>
+                    {itens.length} equipamento{itens.length !== 1 ? 's' : ''}
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {itens.map((eq: any) => (
+                      <div key={eq.id} style={{ padding: '8px 12px', background: 'var(--pci-light)', borderRadius: 6, borderLeft: '3px solid var(--pci-cyan)' }}>
+                        <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.8rem', fontWeight: 500, color: 'var(--pci-text)', marginBottom: 2 }}>{eq.nome}</p>
+                        <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'var(--pci-muted)' }}>{eq.endereco} · {eq.subtipo}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="pci-title" style={{ fontSize: '1.1rem', marginBottom: 8 }}>{t.nome}</h3>
-                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.82rem', color: 'var(--pci-dim)', lineHeight: 1.6, marginBottom: 16 }}>
-                  {t.descricao}
-                </p>
-                {t.status === 'ativo' ? (
-                  <Link href={`/territorios/${t.slug}`} className="pci-btn" style={{ fontSize: '0.8rem', padding: '8px 16px' }}>
-                    Explorar território
-                  </Link>
-                ) : (
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'var(--pci-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                    Em desenvolvimento
-                  </span>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Programas Sociais */}
+        <section className="mb-14">
+          <div className="pci-accent-line" />
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+            <h2 className="pci-title" style={{ fontSize: '1.8rem' }}>Programas Sociais</h2>
+            <Link href="/programas" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>Ver todos →</Link>
+          </div>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            {programas.filter((p: any) => p.status === 'Em Andamento').length} em andamento · {programas.filter((p: any) => p.status === 'Realizado').length} realizados
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {programas.slice(0, 8).map((p: any) => (
+              <div key={p.id} className="pci-card p-5">
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 10 }}>
+                  <span className="pci-tag">{p.tipo}</span>
+                  <span className={`badge ${p.status === 'Em Andamento' ? 'badge-green' : 'badge-blue'}`}>{p.status}</span>
+                </div>
+                <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6 }}>{p.titulo}</h3>
+                {p.beneficiarios && (
+                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.3rem', color: 'var(--pci-blue)', marginTop: 8 }}>
+                    {p.beneficiarios.toLocaleString('pt-BR')}
+                    <span style={{ fontFamily: 'JetBrains Mono', fontWeight: 400, fontSize: '0.6rem', color: 'var(--pci-muted)', marginLeft: 6 }}>{p.unidade_beneficiarios}</span>
+                  </p>
                 )}
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── PROGRAMAS SOCIAIS (prévia) ────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-          <div>
-            <div className="pci-accent-line" />
-            <h2 className="pci-title" style={{ fontSize: '2rem' }}>Programas Sociais</h2>
-            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginTop: 6 }}>
-              Cinturão de Jacarepaguá · {programas.length} programas cadastrados
-            </p>
+        {/* Urbanismo */}
+        <section>
+          <div className="pci-accent-line" />
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+            <h2 className="pci-title" style={{ fontSize: '1.8rem' }}>Intervenções Urbanísticas</h2>
+            <Link href="/urbanismo" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>Ver todas →</Link>
           </div>
-          <Link href="/programas" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>
-            Ver todos →
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {programas.slice(0, 6).map((p: any) => (
-            <div key={p.id} className="pci-card p-5">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 8 }}>
-                <span className="pci-tag">{p.tipo}</span>
-                <span className={`badge ${p.status === 'Em Andamento' ? 'badge-green' : p.status === 'Realizado' ? 'badge-blue' : 'badge-gray'}`}>
-                  {p.status}
-                </span>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            {urbanismoExecutado.length} executadas · {urbanismoPlanejado.length} planejadas
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {urbanismo.slice(0, 8).map((u: any) => (
+              <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Executado' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                  <span className="pci-tag">{u.tipo}</span>
+                  <span className={`badge ${u.status === 'Executado' ? 'badge-green' : 'badge-amber'}`}>{u.status}</span>
+                </div>
+                <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6 }}>{u.titulo}</h3>
+                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'var(--pci-dim)', lineHeight: 1.5 }}>{u.descricao}</p>
+                {u.sub_territorio && (
+                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'var(--pci-muted)', marginTop: 8 }}>📍 {u.sub_territorio}</p>
+                )}
               </div>
-              <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6, lineHeight: 1.4 }}>{p.titulo}</h3>
-              <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'var(--pci-dim)', lineHeight: 1.5, marginBottom: 12 }}>
-                {p.descricao?.substring(0, 100)}...
-              </p>
-              {p.beneficiarios && (
-                <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.2rem', color: 'var(--pci-blue)' }}>
-                  {p.beneficiarios.toLocaleString('pt-BR')}
-                  <span style={{ fontFamily: 'JetBrains Mono', fontWeight: 400, fontSize: '0.65rem', color: 'var(--pci-muted)', marginLeft: 4 }}>
-                    {p.unidade_beneficiarios}
-                  </span>
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CTA ──────────────────────────────────────── */}
-      <section style={{ background: 'linear-gradient(135deg, var(--pci-navy) 0%, #1e3a8a 100%)', color: 'white', borderTop: '3px solid var(--pci-cyan)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-16">
-          <div className="flex flex-wrap items-center justify-between gap-8">
-            <div>
-              <h2 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.5rem, 4vw, 2.5rem)', lineHeight: 1.2, marginBottom: 12 }}>
-                Acesse os dados completos<br />
-                <span style={{ color: 'var(--pci-cyan)' }}>do Programa Cidade Integrada</span>
-              </h2>
-              <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'rgba(255,255,255,0.6)', maxWidth: 480 }}>
-                Painel de indicadores, programas sociais, intervenções urbanísticas e dados abertos.
-              </p>
-            </div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <Link href="/painel" className="pci-btn-white">Painel de Dados</Link>
-              <Link href="/dados" style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.875rem', padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.1)', color: 'white', border: '2px solid rgba(255,255,255,0.25)', display: 'inline-block' }}>
-                Dados Abertos
-              </Link>
-            </div>
+            ))}
           </div>
-        </div>
-      </section>
-
+        </section>
+      </div>
     </div>
   )
 }
