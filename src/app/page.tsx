@@ -38,20 +38,18 @@ export default async function HomePage() {
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1.05rem', color: 'rgba(255,255,255,0.7)', lineHeight: 1.7, marginBottom: 32, maxWidth: 560 }}>
               Dados, indicadores e intervenções do PCI nos territórios do Rio de Janeiro — transparência para gestores, pesquisadores e cidadãos.
             </p>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <Link href="/territorios/cinturao-jacarepagua" className="pci-btn-white">
-                Explorar Cinturão de Jacarepaguá
-              </Link>
-              <Link href="/painel" style={{
-                fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.875rem',
-                padding: '12px 24px', borderRadius: 8,
-                background: 'rgba(255,255,255,0.1)', color: 'white',
-                border: '2px solid rgba(255,255,255,0.25)',
-                display: 'inline-block', transition: 'all 0.2s',
-              }}>
-                Ver Painel de Dados
-              </Link>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {(territorios.length > 0 ? territorios : [
+              { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Gardênia Azul, Rio das Pedras e Corredor do Itanhangá' },
+              { nome: 'Manguinhos e Jacarezinho', slug: 'manguinhos-jacarezinho', status: 'em_breve', descricao: 'Território da Zona Norte do Rio de Janeiro' },
+              { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'em_breve', descricao: 'Território da Zona Sul do Rio de Janeiro' },
+            ]).map((t: any) => (
+              <div key={t.slug} className="pci-card p-6" style={{ opacity: t.status === 'em_breve' ? 0.65 : 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <span className={`badge ${t.status === 'ativo' ? 'badge-green' : 'badge-gray'}`}>
+                    {t.status === 'ativo' ? 'Ativo' : 'Em breve'}
+                  </span>
+                </div>
           </div>
         </div>
 
@@ -129,18 +127,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(territorios.length > 0 ? territorios : [
-              { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Gardênia Azul, Rio das Pedras e Corredor do Itanhangá' },
-              { nome: 'Manguinhos e Jacarezinho', slug: 'manguinhos-jacarezinho', status: 'em_breve', descricao: 'Território da Zona Norte do Rio de Janeiro' },
-              { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'em_breve', descricao: 'Território da Zona Sul do Rio de Janeiro' },
-            ]).map((t: any) => (
-              <div key={t.slug} className="pci-card p-6" style={{ opacity: t.status === 'em_breve' ? 0.65 : 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
-                  <span className={`badge ${t.status === 'ativo' ? 'badge-green' : 'badge-gray'}`}>
-                    {t.status === 'ativo' ? 'Ativo' : 'Em breve'}
-                  </span>
-                </div>
+          
                 <h3 className="pci-title" style={{ fontSize: '1.1rem', marginBottom: 8 }}>{t.nome}</h3>
                 <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.82rem', color: 'var(--pci-dim)', lineHeight: 1.6, marginBottom: 16 }}>
                   {t.descricao}
