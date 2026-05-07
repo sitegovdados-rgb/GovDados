@@ -16,7 +16,7 @@ export default function Footer() {
               Iniciativa do Governo do Estado do Rio de Janeiro para integração entre bairros formais e informais através de investimentos em infraestrutura, urbanismo social e programas sociais.
             </p>
             <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', marginTop: 16, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Secretaria de Estado de Desenvolvimento Social e Direitos Humanos
+              Secretaria de Estado da Casa Civil do Rio de Janeiro
             </p>
           </div>
           <div>
@@ -38,7 +38,7 @@ export default function Footer() {
           <div>
             <p className="pci-label mb-4" style={{ color: 'rgba(255,255,255,0.3)' }}>Fontes de Dados</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {['IBGE — Censo 2022', 'SABREN', 'IPP', 'PNAD', 'CADÚNICO', 'DATASUS', 'PCI — Relatórios 2025'].map(f => (
+              {['IBGE — Censo 2022', 'SABREN', 'IPP', 'PNAD', 'CADÚNICO', 'DATASUS', 'PCI — Relatórios 2026'].map(f => (
                 <p key={f} style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em' }}>{f}</p>
               ))}
             </div>
@@ -49,7 +49,7 @@ export default function Footer() {
             © {new Date().getFullYear()} Programa Cidade Integrada · Governo do Estado do Rio de Janeiro
           </p>
           <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.15)' }}>
-            Directus · Next.js · Railway
+            EGP/PCI/SECC-RJ
           </p>
         </div>
       </div>
