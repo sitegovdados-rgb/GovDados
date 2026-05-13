@@ -1,9 +1,7 @@
 import Link from 'next/link'
-import { getSubTerritorios, getIndicadores, getProgramasSociais, getProgramasUrbanismo, getEquipamentos } from '@/lib/directus'
+import { getSubTerritorios, getIndicadores, getProgramasTerritorio, getProgramasUrbanismo, getEquipamentos } from '@/lib/directus'
 
 export const revalidate = 3600
-
-const TERRITORIO = 'Cinturão de Jacarepaguá'
 
 export default async function CinturaoPage() {
   let subTerritorios: any[] = []
@@ -13,11 +11,11 @@ export default async function CinturaoPage() {
   let equipamentos: any[] = []
 
   try {
-    subTerritorios = await getSubTerritorios(TERRITORIO)
-    indicadores    = await getIndicadores(TERRITORIO)
-    programas      = await getProgramasSociais(TERRITORIO)
-    urbanismo      = await getProgramasUrbanismo(TERRITORIO)
-    equipamentos   = await getEquipamentos(TERRITORIO)
+    subTerritorios = await getSubTerritorios('cinturao-jacarepagua')
+    indicadores    = await getIndicadores()
+    programas      = await getProgramasTerritorio()
+    urbanismo      = await getProgramasUrbanismo()
+    equipamentos   = await getEquipamentos()
   } catch (e) { console.error(e) }
 
   const indPopTotal = indicadores.filter((i: any) => i.nome?.includes('Gardênia Azul') || i.nome?.includes('Corredor') || i.nome?.includes('Rio das Pedras'))
@@ -173,16 +171,16 @@ export default async function CinturaoPage() {
             <Link href="/programas" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>Ver todos →</Link>
           </div>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
-            {programas.filter((p: any) => p.status === 'Em Andamento').length} em andamento · {programas.filter((p: any) => p.status === 'Realizado').length} realizados
+            {programas.filter((p: any) => p.status === 'Em execução').length} em execução · {programas.filter((p: any) => p.status === 'Concluída').length} concluídos
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {programas.slice(0, 8).map((p: any) => (
               <div key={p.id} className="pci-card p-5">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8, marginBottom: 10 }}>
-                  <span className="pci-tag">{p.tipo}</span>
-                  <span className={`badge ${p.status === 'Em Andamento' ? 'badge-green' : 'badge-blue'}`}>{p.status}</span>
+                  <span className="pci-tag">{p.programa?.tipo}</span>
+                  <span className={`badge ${p.status === 'Em execução' ? 'badge-green' : 'badge-blue'}`}>{p.status}</span>
                 </div>
-                <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6 }}>{p.titulo}</h3>
+                <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6 }}>{p.programa?.titulo}</h3>
                 {p.beneficiarios && (
                   <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.3rem', color: 'var(--pci-blue)', marginTop: 8 }}>
                     {p.beneficiarios.toLocaleString('pt-BR')}
@@ -213,9 +211,6 @@ export default async function CinturaoPage() {
                 </div>
                 <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6 }}>{u.titulo}</h3>
                 <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'var(--pci-dim)', lineHeight: 1.5 }}>{u.descricao}</p>
-                {u.sub_territorio && (
-                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'var(--pci-muted)', marginTop: 8 }}>📍 {u.sub_territorio}</p>
-                )}
               </div>
             ))}
           </div>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { getTerritorios, getSubTerritorios, getProgramasSociais, getIndicadores, getProgramasUrbanismo } from '@/lib/directus'
+import { getTerritorios, getSubTerritorios, getProgramasTerritorio, getIndicadores, getProgramasUrbanismo } from '@/lib/directus'
 
 export const revalidate = 3600
 
@@ -12,10 +12,10 @@ export default async function HomePage() {
 
   try {
     territorios    = await getTerritorios()
-    subTerritorios = await getSubTerritorios('Cinturão de Jacarepaguá')
-    programas      = await getProgramasSociais('Cinturão de Jacarepaguá')
-    indicadores    = await getIndicadores('Cinturão de Jacarepaguá')
-    urbanismo      = await getProgramasUrbanismo('Cinturão de Jacarepaguá')
+    subTerritorios = await getSubTerritorios('cinturao-jacarepagua')
+    programas      = await getProgramasTerritorio()
+    indicadores    = await getIndicadores()
+    urbanismo      = await getProgramasUrbanismo()
   } catch (e) { console.error(e) }
 
   const totalBeneficiarios = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
@@ -176,9 +176,6 @@ export default async function HomePage() {
                   <span className={`badge ${u.status === 'Executado' ? 'badge-green' : 'badge-amber'}`}>{u.status}</span>
                 </div>
                 <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.88rem', color: 'var(--pci-text)', marginBottom: 4 }}>{u.titulo}</h3>
-                {u.sub_territorio && (
-                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'var(--pci-muted)', marginTop: 6 }}>📍 {u.sub_territorio}</p>
-                )}
               </div>
             ))}
           </div>
@@ -203,14 +200,14 @@ export default async function HomePage() {
           {programas.slice(0, 6).map((p: any) => (
             <div key={p.id} className="pci-card p-5">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 8 }}>
-                <span className="pci-tag">{p.tipo}</span>
-                <span className={`badge ${p.status === 'Em Andamento' ? 'badge-green' : p.status === 'Realizado' ? 'badge-blue' : 'badge-gray'}`}>
+                <span className="pci-tag">{p.programa?.tipo}</span>
+                <span className={`badge ${p.status === 'Em execução' ? 'badge-green' : p.status === 'Concluída' ? 'badge-blue' : 'badge-gray'}`}>
                   {p.status}
                 </span>
               </div>
-              <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6, lineHeight: 1.4 }}>{p.titulo}</h3>
+              <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6, lineHeight: 1.4 }}>{p.programa?.titulo}</h3>
               <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'var(--pci-dim)', lineHeight: 1.5, marginBottom: 12 }}>
-                {p.descricao?.substring(0, 100)}...
+                {p.programa?.descricao?.substring(0, 100)}...
               </p>
               {p.beneficiarios && (
                 <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.2rem', color: 'var(--pci-blue)' }}>

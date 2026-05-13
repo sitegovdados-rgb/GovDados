@@ -10,8 +10,7 @@ interface Programa {
   area_tematica: string
   eixo: string
   tipo: string
-  territorio: string
-  sub_territorio: string
+  territorio: { id: number; nome: string; slug: string } | null
   beneficiarios: number | null
   unidade_beneficiarios: string | null
   periodo: string
@@ -42,9 +41,7 @@ const SLUGS_PROGRAMAS: Record<string, string> = {
   'Reabilita 60+ — Fisioterapia':   '/programas/corredor-itanhanga/reabilita-60',
 }
 
-// Mapeamento de sub-territórios para filtrar
-// Como os dados no Directus podem ter sub_territorio vazio,
-// usamos o campo sub_territorio OU buscamos no titulo/descricao
+// Opções de território para o filtro (por nome do objeto relacional)
 const TERRITORIOS_OPCOES = [
   { label: 'Todos',                    valor: '' },
   { label: 'Cinturão de Jacarepaguá',  valor: 'Cinturão de Jacarepaguá' },
@@ -55,7 +52,7 @@ const TERRITORIOS_OPCOES = [
 
 function matchTerritorio(p: Programa, filtro: string): boolean {
   if (!filtro) return true
-  const campos = [p.territorio, p.sub_territorio, p.descricao, p.titulo].join(' ')
+  const campos = [p.territorio?.nome, p.descricao, p.titulo].join(' ')
   return campos.includes(filtro)
 }
 
@@ -226,9 +223,9 @@ export default function ProgramasFiltrados({ programas }: Props) {
                     </div>
                   ) : null}
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                    {p.sub_territorio || p.territorio ? (
+                    {p.territorio?.nome ? (
                       <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)' }}>
-                        📍 {p.sub_territorio || p.territorio}
+                        📍 {p.territorio.nome}
                       </p>
                     ) : null}
                     {slug && (

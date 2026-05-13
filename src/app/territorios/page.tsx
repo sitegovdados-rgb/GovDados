@@ -8,7 +8,7 @@ export default async function TerritoriosPage() {
   let subTerritorios: any[] = []
   try {
     territorios   = await getTerritorios()
-    subTerritorios = await getSubTerritorios('Cinturão de Jacarepaguá')
+    subTerritorios = await getSubTerritorios('cinturao-jacarepagua')
   } catch (e) { console.error(e) }
 
   return (

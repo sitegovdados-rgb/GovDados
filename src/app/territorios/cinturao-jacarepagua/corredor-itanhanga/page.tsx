@@ -1,13 +1,10 @@
 import Link from 'next/link'
-import { getFavelas, getIndicadores, getProgramasSociais, getEquipamentos } from '@/lib/directus'
+import { getFavelasPorSlug, getIndicadoresPorSlug, getProgramasPorSlug, getEquipamentosPorSlug } from '@/lib/directus'
 import GaleriaMapa from '@/components/ui/GaleriaMapa'
 import TabelaDados from '@/components/ui/TabelaDados'
 import Diagnostico from '@/components/ui/Diagnostico'
 
 export const revalidate = 3600
-
-const SUB = 'Corredor do Itanhangá'
-const TERRITORIO = 'Cinturão de Jacarepaguá'
 
 const MAPAS = [
   {
@@ -34,19 +31,11 @@ export default async function CorredorItanhangaPage() {
   let equipamentos: any[] = []
 
   try {
-    favelas      = await getFavelas(SUB)
-    indicadores  = await getIndicadores(TERRITORIO)
-    programas    = await getProgramasSociais(TERRITORIO)
-    equipamentos = await getEquipamentos(TERRITORIO)
+    favelas      = await getFavelasPorSlug('corredor-itanhanga')
+    indicadores  = await getIndicadoresPorSlug('corredor-itanhanga')
+    programas    = await getProgramasPorSlug('corredor-itanhanga')
+    equipamentos = await getEquipamentosPorSlug('corredor-itanhanga')
   } catch (e) { console.error(e) }
-
-  const indCI = indicadores.filter((i: any) =>
-    i.nome?.includes('Corredor') || i.nome?.includes('Itanhangá')
-  )
-
-  const equipCI = equipamentos.filter((e: any) =>
-    e.sub_territorio === SUB || e.sub_territorio?.includes('Itanhangá')
-  )
 
   return (
     <div>

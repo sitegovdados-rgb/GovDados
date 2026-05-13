@@ -1,13 +1,10 @@
 import Link from 'next/link'
-import { getFavelas, getIndicadores, getProgramasSociais, getEquipamentos } from '@/lib/directus'
+import { getIndicadoresPorSlug, getProgramasPorSlug, getEquipamentosPorSlug } from '@/lib/directus'
 import GaleriaMapa from '@/components/ui/GaleriaMapa'
 import TabelaDados from '@/components/ui/TabelaDados'
 import Diagnostico from '@/components/ui/Diagnostico'
 
 export const revalidate = 3600
-
-const SUB = 'Rio das Pedras'
-const TERRITORIO = 'Cinturão de Jacarepaguá'
 
 const MAPAS = [
   {
@@ -33,13 +30,12 @@ export default async function RiodasPedrasPage() {
   let equipamentos: any[] = []
 
   try {
-    indicadores  = await getIndicadores(TERRITORIO)
-    programas    = await getProgramasSociais(TERRITORIO)
-    equipamentos = await getEquipamentos(TERRITORIO)
+    indicadores  = await getIndicadoresPorSlug('rio-das-pedras')
+    programas    = await getProgramasPorSlug('rio-das-pedras')
+    equipamentos = await getEquipamentosPorSlug('rio-das-pedras')
   } catch (e) { console.error(e) }
 
-  const indRP = indicadores.filter((i: any) => i.nome?.includes('Rio das Pedras'))
-  const equipRP = equipamentos.filter((e: any) => e.sub_territorio === SUB)
+  const equipRP = equipamentos
 
   return (
     <div>

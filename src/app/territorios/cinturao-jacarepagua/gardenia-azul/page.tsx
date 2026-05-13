@@ -1,13 +1,10 @@
 import Link from 'next/link'
-import { getFavelas, getIndicadores, getProgramasSociais, getEquipamentos } from '@/lib/directus'
+import { getFavelasPorSlug, getIndicadoresPorSlug, getProgramasPorSlug, getEquipamentosPorSlug } from '@/lib/directus'
 import GaleriaMapa from '@/components/ui/GaleriaMapa'
 import TabelaDados from '@/components/ui/TabelaDados'
 import Diagnostico from '@/components/ui/Diagnostico'
 
 export const revalidate = 3600
-
-const SUB = 'Gardênia Azul'
-const TERRITORIO = 'Cinturão de Jacarepaguá'
 
 // URLs das imagens do Drive (via Google Drive viewer público)
 const MAPAS = [
@@ -40,19 +37,13 @@ export default async function GardeniaAzulPage() {
   let equipamentos: any[] = []
 
   try {
-    favelas      = await getFavelas(SUB)
-    indicadores  = await getIndicadores(TERRITORIO)
-    programas    = await getProgramasSociais(TERRITORIO)
-    equipamentos = await getEquipamentos(TERRITORIO)
+    favelas      = await getFavelasPorSlug('gardenia-azul')
+    indicadores  = await getIndicadoresPorSlug('gardenia-azul')
+    programas    = await getProgramasPorSlug('gardenia-azul')
+    equipamentos = await getEquipamentosPorSlug('gardenia-azul')
   } catch (e) { console.error(e) }
 
-  const indGardenia = indicadores.filter((i: any) =>
-    i.nome?.includes('Gardênia') || i.nome?.includes('Canal do Anil') ||
-    i.nome?.includes('Vila Nova') || i.nome?.includes('Novo Rio') ||
-    i.nome?.includes('Avenida das Lagoas') || i.nome?.includes('Curipós')
-  )
-
-  const equip = equipamentos.filter((e: any) => e.sub_territorio === SUB || !e.sub_territorio)
+  const equip = equipamentos
 
   return (
     <div>

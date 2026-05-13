@@ -21,7 +21,7 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
   const filtrados = useMemo(() => urbanismo.filter(u => {
     if (tipoFiltro !== 'Todos' && u.tipo !== tipoFiltro) return false
     if (terrFiltro !== 'Todos') {
-      const terr = [u.territorio, u.sub_territorio].join(' ')
+      const terr = u.territorio?.nome || ''
       if (!terr.includes(terrFiltro)) return false
     }
     if (statusFiltro !== 'Todos' && u.status !== statusFiltro) return false
@@ -89,8 +89,8 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
               </div>
               <div style={{ padding: '10px 20px 14px', borderTop: '1px solid var(--pci-border)', display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)' }}>{u.periodo}</span>
-                {u.sub_territorio && (
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)' }}>📍 {u.sub_territorio}</span>
+                {u.territorio?.nome && (
+                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)' }}>📍 {u.territorio.nome}</span>
                 )}
               </div>
             </div>

@@ -99,7 +99,7 @@ function TabPopulacao({ indicadores }: { indicadores: any[] }) {
   const porTerritorio = useMemo(() => {
     const map: Record<string, { populacao: number; domicilios: number }> = {}
     for (const ind of indicadores) {
-      const t = ind.territorio || ind.sub_territorio || 'Geral'
+      const t = ind.territorio?.nome || 'Geral'
       if (!map[t]) map[t] = { populacao: 0, domicilios: 0 }
       const nome = (ind.nome || '').toLowerCase()
       const val = Number(ind.valor) || 0
@@ -201,7 +201,7 @@ function TabPopulacao({ indicadores }: { indicadores: any[] }) {
               {indicadores.map((ind, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? 'white' : BG, borderBottom: `1px solid ${BORDER}` }}>
                   <td style={{ padding: '10px 16px', color: TEXT }}>{ind.nome || '—'}</td>
-                  <td style={{ padding: '10px 16px', color: DIM }}>{ind.territorio || ind.sub_territorio || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: DIM }}>{ind.territorio?.nome || '—'}</td>
                   <td style={{ padding: '10px 16px', color: DIM }}>{ind.area_tematica || '—'}</td>
                   <td style={{ padding: '10px 16px', fontFamily: 'JetBrains Mono', fontWeight: 600, color: NAVY }}>{fmt(ind.valor)}</td>
                   <td style={{ padding: '10px 16px', color: MUTED, fontFamily: 'JetBrains Mono', fontSize: '0.75rem' }}>{ind.unidade || '—'}</td>
