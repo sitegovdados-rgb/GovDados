@@ -64,6 +64,26 @@ export default async function RiodasPedrasPage() {
             <span className="pci-tag-navy">51.829 hab/km²</span>
           </div>
         </div>
+
+        {/* KPI bar */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4">
+              {[
+                { valor: '64.988', label: 'Habitantes', sub: 'Maior do Cinturão · Censo 2022' },
+                { valor: '33.112', label: 'Domicílios', sub: '2ª maior favela do Brasil' },
+                { valor: '51.829', label: 'hab/km²', sub: 'Densidade demográfica' },
+                { valor: '92,59%', label: 'Alfabetizados', sub: 'Taxa de alfabetização' },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '16px 24px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.6rem', color: 'var(--pci-cyan)', lineHeight: 1 }}>{item.valor}</p>
+                  <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem', color: 'white', marginTop: 4 }}>{item.label}</p>
+                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.55rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{item.sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       <div className="max-w-7xl mx-auto px-6 py-12 space-y-14">

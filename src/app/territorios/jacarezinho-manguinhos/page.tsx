@@ -9,6 +9,11 @@ const CORES_EIXO: Record<string, string> = {
   'Segurança': '#dc2626', 'Transparência': '#7c3aed', 'Diálogo': '#16a34a',
 }
 
+const DADOS_RACA = [
+  { name: 'Jacarezinho', preta: 27, parda: 43 },
+  { name: 'Manguinhos',  preta: 20, parda: 41 },
+]
+
 export default async function ManguinhosPage() {
   let programas: any[] = []
   let equipamentos: any[] = []
@@ -39,6 +44,10 @@ export default async function ManguinhosPage() {
     }, {} as Record<string, number>)
   ).map(([name, value]) => ({ name, value: value as number }))
 
+  const urbanismoExecutado = urbanismo.filter((u: any) => u.status === 'Concluído')
+  const urbanismoAndamento = urbanismo.filter((u: any) => u.status === 'Em execução')
+  const urbanismoFuturo    = urbanismo.filter((u: any) => u.status === 'Não iniciado' || u.status === 'Aguardando Aprovação')
+
   return (
     <div>
       <section style={{ background: 'linear-gradient(135deg, var(--pci-navy) 0%, #1e3a8a 100%)', color: 'white', borderBottom: '3px solid var(--pci-cyan)' }}>
@@ -63,17 +72,19 @@ export default async function ManguinhosPage() {
             <span className="pci-tag-navy">ADPF 635 · STF</span>
           </div>
         </div>
+
+        {/* KPI bar */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4">
               {[
+                { valor: '29.766', label: 'Jacarezinho', sub: 'habitantes · Censo 2022' },
+                { valor: '78.130', label: 'hab/km²', sub: 'Jacarezinho · Maior densidade PCI' },
+                { valor: '17.249', label: 'Manguinhos', sub: 'habitantes · Censo 2022' },
                 { valor: String(programas.length || '—'), label: 'Programas', sub: 'sociais mapeados' },
-                { valor: totalBenef > 0 ? totalBenef.toLocaleString('pt-BR') : '—', label: 'Beneficiários', sub: 'atendidos' },
-                { valor: String(urbanismo.length || '—'), label: 'Intervenções', sub: 'urbanísticas' },
-                { valor: String(equipamentos.length || '—'), label: 'Equipamentos', sub: 'públicos' },
               ].map((item, i) => (
                 <div key={i} style={{ padding: '16px 24px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
-                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.6rem', color: 'var(--pci-cyan)', lineHeight: 1 }}>{item.valor}</p>
+                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.6rem', color: i === 1 ? '#fca5a5' : 'var(--pci-cyan)', lineHeight: 1 }}>{item.valor}</p>
                   <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem', color: 'white', marginTop: 4 }}>{item.label}</p>
                   <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.55rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{item.sub}</p>
                 </div>
@@ -85,6 +96,33 @@ export default async function ManguinhosPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-12">
 
+        {/* Perfil Demográfico */}
+        <section className="mb-14">
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 6 }}>Perfil Demográfico</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            Censo IBGE 2022 · Dados por comunidade
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div className="pci-card p-6 text-center">
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Jacarezinho — Habitantes</p>
+              <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '2.2rem', color: 'var(--pci-navy)', lineHeight: 1 }}>29.766</p>
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', marginTop: 8 }}>Censo IBGE 2022</p>
+            </div>
+            <div className="pci-card p-6 text-center" style={{ borderTop: '3px solid #dc2626' }}>
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Densidade — Jacarezinho</p>
+              <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '2.2rem', color: '#dc2626', lineHeight: 1 }}>78.130</p>
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: '#dc2626', marginTop: 8 }}>hab/km² · Maior entre todos os territórios PCI</p>
+            </div>
+            <div className="pci-card p-6 text-center">
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Manguinhos — Habitantes</p>
+              <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '2.2rem', color: 'var(--pci-navy)', lineHeight: 1 }}>17.249</p>
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', marginTop: 8 }}>Censo IBGE 2022</p>
+            </div>
+          </div>
+          <ManguinhosCharts dadosEixo={[]} dadosStatus={[]} dadosRaca={DADOS_RACA} />
+        </section>
+
         {/* Contexto territorial */}
         <section className="mb-14">
           <div className="pci-accent-line" />
@@ -93,13 +131,13 @@ export default async function ManguinhosPage() {
             <div className="pci-card p-6">
               <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Jacarezinho</h3>
               <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)', lineHeight: 1.75 }}>
-                Uma das maiores favelas do Rio de Janeiro em extensão territorial, o Jacarezinho situa-se às margens da ferrovia e da Av. Brasil, na Zona Norte. Com população estimada superior a 70 mil habitantes, o território concentra alta vulnerabilidade social, histórico de conflito armado e déficit expressivo em saneamento, habitação e equipamentos públicos.
+                Uma das maiores favelas do Rio de Janeiro, o Jacarezinho situa-se às margens da ferrovia e da Av. Brasil, na Zona Norte. Com 29.766 habitantes e densidade de 78.130 hab/km² — a mais alta entre todos os territórios do PCI —, concentra alta vulnerabilidade social e déficit expressivo em saneamento, habitação e equipamentos públicos. Cerca de 27% da população se declara preta (Censo 2022).
               </p>
             </div>
             <div className="pci-card p-6">
               <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Manguinhos</h3>
               <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)', lineHeight: 1.75 }}>
-                Complexo de favelas no entorno da Fiocruz, Manguinhos abrange múltiplas comunidades com mais de 30 mil habitantes. A área passou por intervenções do PAC entre 2007-2015, com obras de urbanização e infraestrutura, e atualmente é alvo de programas do PCI voltados à geração de renda e cultura.
+                Complexo de favelas no entorno da Fiocruz, Manguinhos abrange múltiplas comunidades com 17.249 habitantes (Censo 2022). Cerca de 20% da população se declara preta. A área passou por intervenções do PAC entre 2007–2015 e é atualmente alvo de programas do PCI voltados à geração de renda e cultura.
               </p>
             </div>
           </div>
@@ -193,29 +231,71 @@ export default async function ManguinhosPage() {
           </section>
         )}
 
-        {/* Urbanismo */}
-        {urbanismo.length > 0 && (
-          <section>
+        {/* Urbanismo — Executado */}
+        {urbanismoExecutado.length > 0 && (
+          <section className="mb-10">
             <div className="pci-accent-line" />
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
               <h2 className="pci-title" style={{ fontSize: '1.8rem' }}>Intervenções Urbanísticas</h2>
               <Link href="/urbanismo" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>Ver todas →</Link>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {urbanismo.map((u: any) => (
-                <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Concluído' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
+            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 20 }}>
+              {urbanismoExecutado.length} executadas · {urbanismoAndamento.length} em andamento · {urbanismoFuturo.length} planejadas
+            </p>
+
+            <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Obras Executadas</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              {urbanismoExecutado.map((u: any) => (
+                <div key={u.id} className="pci-card p-5" style={{ borderLeft: '4px solid var(--pci-green)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
                     <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
-                    <span className={`badge ${u.status === 'Concluído' ? 'badge-green' : u.status === 'Em execução' ? 'badge-blue' : 'badge-amber'}`}>{u.status}</span>
+                    <span className="badge badge-green">{u.status}</span>
                   </div>
-                  <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h3>
+                  <h4 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h4>
                   {u.comunidade && <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', marginTop: 6 }}>{u.comunidade}</p>}
                 </div>
               ))}
             </div>
+
+            {urbanismoAndamento.length > 0 && (
+              <>
+                <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Em Andamento</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                  {urbanismoAndamento.map((u: any) => (
+                    <div key={u.id} className="pci-card p-5" style={{ borderLeft: '4px solid var(--pci-cyan)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                        <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                        <span className="badge badge-blue">{u.status}</span>
+                      </div>
+                      <h4 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h4>
+                      {u.comunidade && <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', marginTop: 6 }}>{u.comunidade}</p>}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {urbanismoFuturo.length > 0 && (
+              <>
+                <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Projetos Futuros</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {urbanismoFuturo.map((u: any) => (
+                    <div key={u.id} className="pci-card p-5" style={{ borderLeft: '4px solid var(--pci-muted)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                        <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                        <span className="badge badge-amber">{u.status}</span>
+                      </div>
+                      <h4 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h4>
+                      {u.comunidade && <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'var(--pci-muted)', marginTop: 6 }}>{u.comunidade}</p>}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
         )}
 
+        {/* Fallback */}
         {programas.length === 0 && equipamentos.length === 0 && (
           <div style={{ textAlign: 'center', padding: '80px 0', color: 'var(--pci-muted)' }}>
             <p style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '1.1rem', marginBottom: 8 }}>Dados em preparação</p>

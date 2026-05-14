@@ -3,6 +3,41 @@ import { getTerritorio, getIndicadoresPorSlug, getProgramasPorSlug, getEquipamen
 
 export const revalidate = 3600
 
+const DESTAQUES_PPG = [
+  { valor: '84.000', label: 'Atendimentos AME', sub: 'Desde a inauguração em 2023' },
+  { valor: '1.650', label: 'Reabilita 60+', sub: '750 Ed. Física · 900 Fisioterapia' },
+  { valor: '21', label: 'Reuniões CCCI', sub: 'Comitê Comunitário realizadas' },
+  { valor: '3.000', label: 'Mamografias', sub: 'Campanha Laço Rosa 2025' },
+  { valor: '400', label: 'Acolher', sub: 'Beneficiários em escolinhas esportivas' },
+]
+
+const OBRAS_EXECUTADAS = [
+  { titulo: 'AME — Ambulatório Médico de Especialidades', tipo: 'Saúde' },
+  { titulo: 'MUF — Módulo de Uso Flexível', tipo: 'Equipamento' },
+  { titulo: 'BPTUR — Batalhão de Polícia de Turismo', tipo: 'Segurança' },
+  { titulo: 'Restaurante Escola', tipo: 'Social' },
+  { titulo: 'Lavanderia Comunitária', tipo: 'Social' },
+  { titulo: 'Quadra da Espanha', tipo: 'Esporte' },
+  { titulo: 'CRJ — Centro de Referência da Juventude', tipo: 'Social' },
+  { titulo: 'Praça do Escadão', tipo: 'Urbanismo' },
+  { titulo: 'Foyer', tipo: 'Cultura' },
+  { titulo: 'Cantina', tipo: 'Social' },
+]
+
+const OBRAS_ANDAMENTO = [
+  { titulo: 'Biblioteca Parque', tipo: 'Cultura' },
+  { titulo: 'Sala de Teatro', tipo: 'Cultura' },
+  { titulo: 'Piscina', tipo: 'Esporte' },
+  { titulo: 'Quadra Poliesportiva', tipo: 'Esporte' },
+]
+
+const OBRAS_FUTURAS = [
+  { titulo: 'Cine Teatro', tipo: 'Cultura' },
+  { titulo: 'Estúdio de Gravação', tipo: 'Cultura' },
+  { titulo: 'Escola de Turismo', tipo: 'Educação' },
+  { titulo: 'Caminho da Arte', tipo: 'Cultura' },
+]
+
 export default async function PPGPage() {
   let territorio: any = null
   let indicadores: any[] = []
@@ -11,11 +46,11 @@ export default async function PPGPage() {
   let urbanismo: any[] = []
 
   try {
-    territorio  = await getTerritorio('ppg')
-    indicadores = await getIndicadoresPorSlug('ppg')
-    programas   = await getProgramasPorSlug('ppg')
+    territorio   = await getTerritorio('ppg')
+    indicadores  = await getIndicadoresPorSlug('ppg')
+    programas    = await getProgramasPorSlug('ppg')
     equipamentos = await getEquipamentosPorSlug('ppg')
-    urbanismo   = await getUrbanismoPorSlug('ppg')
+    urbanismo    = await getUrbanismoPorSlug('ppg')
   } catch (e) { console.error(e) }
 
   const totalPop = indicadores
@@ -23,6 +58,10 @@ export default async function PPGPage() {
     .reduce((acc: number, i: any) => acc + (Number(i.valor) || 0), 0)
 
   const tiposEquip = [...new Set(equipamentos.map((e: any) => e.tipo))].sort()
+
+  const urbanismoExecutado = urbanismo.filter((u: any) => u.status === 'Concluído')
+  const urbanismoAndamento = urbanismo.filter((u: any) => u.status === 'Em execução')
+  const urbanismoFuturo    = urbanismo.filter((u: any) => u.status === 'Não iniciado' || u.status === 'Aguardando Aprovação')
 
   return (
     <div>
@@ -74,6 +113,24 @@ export default async function PPGPage() {
       </section>
 
       <div className="max-w-7xl mx-auto px-6 py-12">
+
+        {/* Resultados em Destaque */}
+        <section className="mb-14">
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 6 }}>Resultados em Destaque</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            Impacto direto dos programas PCI no Pavão-Pavãozinho e Cantagalo
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {DESTAQUES_PPG.map((d, i) => (
+              <div key={i} className="pci-card p-5 text-center">
+                <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.6rem', color: 'var(--pci-cyan)', lineHeight: 1 }}>{d.valor}</p>
+                <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem', color: 'var(--pci-navy)', marginTop: 6 }}>{d.label}</p>
+                <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.55rem', color: 'var(--pci-muted)', marginTop: 4, lineHeight: 1.4 }}>{d.sub}</p>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Indicadores */}
         {indicadores.length > 0 && (
@@ -162,27 +219,113 @@ export default async function PPGPage() {
           </section>
         )}
 
-        {/* Urbanismo */}
-        {urbanismo.length > 0 && (
-          <section>
-            <div className="pci-accent-line" />
-            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
-              <h2 className="pci-title" style={{ fontSize: '1.8rem' }}>Intervenções Urbanísticas</h2>
-              <Link href="/urbanismo" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>Ver todas →</Link>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {urbanismo.map((u: any) => (
-                <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Concluído' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
-                    <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
-                    <span className={`badge ${u.status === 'Concluído' ? 'badge-green' : u.status === 'Em execução' ? 'badge-blue' : 'badge-amber'}`}>{u.status}</span>
+        {/* Urbanismo — por fase, com fallback estático */}
+        <section>
+          <div className="pci-accent-line" />
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+            <h2 className="pci-title" style={{ fontSize: '1.8rem' }}>Intervenções Urbanísticas</h2>
+            <Link href="/urbanismo" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>Ver todas →</Link>
+          </div>
+
+          {urbanismo.length > 0 ? (
+            <>
+              <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 20 }}>
+                {urbanismoExecutado.length} executadas · {urbanismoAndamento.length} em andamento · {urbanismoFuturo.length} planejadas
+              </p>
+              {urbanismoExecutado.length > 0 && (
+                <>
+                  <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Obras Executadas</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    {urbanismoExecutado.map((u: any) => (
+                      <div key={u.id} className="pci-card p-5" style={{ borderLeft: '4px solid var(--pci-green)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                          <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                          <span className="badge badge-green">{u.status}</span>
+                        </div>
+                        <h4 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h4>
+                      </div>
+                    ))}
                   </div>
-                  <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h3>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                </>
+              )}
+              {urbanismoAndamento.length > 0 && (
+                <>
+                  <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Em Andamento</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                    {urbanismoAndamento.map((u: any) => (
+                      <div key={u.id} className="pci-card p-5" style={{ borderLeft: '4px solid var(--pci-cyan)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                          <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                          <span className="badge badge-blue">{u.status}</span>
+                        </div>
+                        <h4 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h4>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+              {urbanismoFuturo.length > 0 && (
+                <>
+                  <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Projetos Futuros</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {urbanismoFuturo.map((u: any) => (
+                      <div key={u.id} className="pci-card p-5" style={{ borderLeft: '4px solid var(--pci-muted)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
+                          <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                          <span className="badge badge-amber">{u.status}</span>
+                        </div>
+                        <h4 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)' }}>{u.titulo}</h4>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            /* Fallback estático quando não há dados no BD */
+            <>
+              <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 20 }}>
+                {OBRAS_EXECUTADAS.length} executadas · {OBRAS_ANDAMENTO.length} em andamento · {OBRAS_FUTURAS.length} planejadas
+              </p>
+              <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Obras Executadas</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {OBRAS_EXECUTADAS.map((o, i) => (
+                  <div key={i} className="pci-card p-4" style={{ borderLeft: '4px solid var(--pci-green)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <span className="pci-tag">{o.tipo}</span>
+                      <span className="badge badge-green">Concluído</span>
+                    </div>
+                    <p style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.88rem', color: 'var(--pci-text)' }}>{o.titulo}</p>
+                  </div>
+                ))}
+              </div>
+              <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Em Andamento</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                {OBRAS_ANDAMENTO.map((o, i) => (
+                  <div key={i} className="pci-card p-4" style={{ borderLeft: '4px solid var(--pci-cyan)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <span className="pci-tag">{o.tipo}</span>
+                      <span className="badge badge-blue">Em execução</span>
+                    </div>
+                    <p style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.88rem', color: 'var(--pci-text)' }}>{o.titulo}</p>
+                  </div>
+                ))}
+              </div>
+              <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'var(--pci-navy)', marginBottom: 12 }}>Projetos Futuros</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {OBRAS_FUTURAS.map((o, i) => (
+                  <div key={i} className="pci-card p-4" style={{ borderLeft: '4px solid var(--pci-muted)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                      <span className="pci-tag">{o.tipo}</span>
+                      <span className="badge badge-amber">Planejado</span>
+                    </div>
+                    <p style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.88rem', color: 'var(--pci-text)' }}>{o.titulo}</p>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
 
         {programas.length === 0 && indicadores.length === 0 && equipamentos.length === 0 && (
           <div style={{ textAlign: 'center', padding: '80px 0', color: 'var(--pci-muted)' }}>
