@@ -1,24 +1,11 @@
-import { getProgramasTerritorio } from '@/lib/directus'
+import { getProgramasSociais } from '@/lib/directus'
 import ProgramasFiltrados from '@/components/ui/ProgramasFiltrados'
 
 export const revalidate = 3600
 
 export default async function ProgramasPage() {
-  let juncao: any[] = []
-  try { juncao = await getProgramasTerritorio() } catch (e) { console.error(e) }
-
-  const programas = juncao.map(p => ({
-    id: p.id,
-    titulo: p.programa?.titulo || '',
-    descricao: p.programa?.descricao || '',
-    eixo: p.programa?.eixo || 'Social',
-    tipo: p.programa?.tipo || '',
-    territorio: p.territorio || null,
-    beneficiarios: p.beneficiarios ?? p.programa?.beneficiarios ?? null,
-    unidade_beneficiarios: p.unidade_beneficiarios ?? p.programa?.unidade_beneficiarios ?? null,
-    periodo: p.periodo ?? p.programa?.periodo ?? '',
-    status: p.status ?? p.programa?.status ?? '',
-  }))
+  let programas: any[] = []
+  try { programas = await getProgramasSociais() } catch (e) { console.error(e) }
 
   const total = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
 
