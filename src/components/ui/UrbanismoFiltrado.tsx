@@ -79,7 +79,7 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
           <div>
             <label style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pci-muted)', display: 'block', marginBottom: 6 }}>Status</label>
             <select value={statusFiltro} onChange={e => setStatusFiltro(e.target.value)} style={selectStyle}>
-              {['Todos', 'Executado', 'Planejado', 'Em execução', 'Concluído'].map(o => <option key={o} value={o}>{o}</option>)}
+              {['Todos', 'Concluído', 'Em execução', 'Não iniciado', 'Aguardando Aprovação', 'Aguardando Revisão', 'Suspenso', 'Cancelado'].map(o => <option key={o} value={o}>{o}</option>)}
             </select>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
               <div style={{ padding: '16px 20px 12px', borderBottom: '1px solid var(--pci-border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
                   <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
-                  <span className={`badge ${u.status === 'Executado' ? 'badge-green' : u.status === 'Concluído' ? 'badge-blue' : 'badge-amber'}`}>{u.status}</span>
+                  <span className={`badge ${u.status === 'Concluído' ? 'badge-green' : u.status === 'Em execução' ? 'badge-blue' : u.status === 'Suspenso' || u.status === 'Cancelado' ? 'badge-gray' : 'badge-amber'}`}>{u.status}</span>
                 </div>
                 <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '0.9rem', color: 'var(--pci-text)', lineHeight: 1.35 }}>{u.titulo}</h3>
               </div>

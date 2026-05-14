@@ -7,8 +7,8 @@ export default async function UrbanismoPage() {
   let urbanismo: any[] = []
   try { urbanismo = await getProgramasUrbanismo() } catch (e) { console.error(e) }
 
-  const executados = urbanismo.filter((u: any) => u.status === 'Executado').length
-  const planejados = urbanismo.filter((u: any) => u.status === 'Planejado').length
+  const concluidos  = urbanismo.filter((u: any) => u.status === 'Concluído').length
+  const emExecucao  = urbanismo.filter((u: any) => u.status === 'Em execução').length
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12">
@@ -23,9 +23,9 @@ export default async function UrbanismoPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {[
-          { valor: urbanismo.length, label: 'Total de intervenções', cor: 'var(--pci-navy)' },
-          { valor: executados,       label: 'Executadas',            cor: 'var(--pci-green)' },
-          { valor: planejados,       label: 'Planejadas',            cor: 'var(--pci-cyan)' },
+          { valor: urbanismo.length, label: 'Total de projetos',  cor: 'var(--pci-navy)' },
+          { valor: concluidos,       label: 'Concluídos',         cor: 'var(--pci-green)' },
+          { valor: emExecucao,       label: 'Em execução',        cor: 'var(--pci-cyan)' },
         ].map((s, i) => (
           <div key={i} className="pci-card p-6 text-center">
             <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '2rem', color: s.cor }}>{s.valor}</p>
