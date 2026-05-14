@@ -5,6 +5,16 @@ interface Props {
   urbanismo: any[]
 }
 
+const LABEL_TERRITORIO: Record<string, string> = {
+  'Corredor do Itanhangá':      'Corredor Itanhangá',
+  'Manguinhos e Jacarezinho':   'Jacarezinho e Manguinhos',
+  'Pavão-Pavãozinho e Cantagalo': 'PPG',
+  'Cinturão de Jacarepaguá':    'Cinturão de Jacarepaguá',
+  'Gardênia Azul':              'Gardênia Azul',
+  'Rio das Pedras':             'Rio das Pedras',
+  'Outros':                     'Outros',
+}
+
 export default function UrbanismoFiltrado({ urbanismo }: Props) {
   const [busca, setBusca]           = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('Todos')
@@ -55,7 +65,7 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
               <label style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pci-muted)', display: 'block', marginBottom: 6 }}>{f.label}</label>
               <select value={f.value} onChange={e => f.onChange(e.target.value)}
                 style={{ width: '100%', padding: '8px 12px', fontSize: '0.85rem', border: '1px solid var(--pci-border)', borderRadius: 6, outline: 'none', fontFamily: 'Plus Jakarta Sans', background: 'var(--pci-bg)', color: 'var(--pci-text)' }}>
-                {f.opts.map(o => <option key={o}>{o}</option>)}
+                {f.opts.map(o => <option key={o} value={o}>{f.label === 'Território' ? (LABEL_TERRITORIO[o] || o) : o}</option>)}
               </select>
             </div>
           ))}

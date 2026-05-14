@@ -26,12 +26,12 @@ export default async function OutrosPage() {
             </Link>
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>›</span>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.65rem', color: 'var(--pci-cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Outros — Atuações Pontuais
+              Outros — Atuações do PCI
             </span>
           </div>
           <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, marginBottom: 12, marginTop: 12 }}>
             Outros —<br />
-            <span style={{ color: 'var(--pci-cyan)' }}>Atuações Pontuais</span>
+            <span style={{ color: 'var(--pci-cyan)' }}>Atuações do PCI</span>
           </h1>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
             Programas sociais e intervenções urbanísticas do Programa Cidade Integrada realizadas fora dos territórios principais — atuações em diversas regiões do Rio de Janeiro.

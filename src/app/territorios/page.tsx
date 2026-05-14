@@ -9,7 +9,7 @@ function labelTipo(t: any): string {
 }
 
 function nomeDisplay(t: any): string {
-  if (t.slug === 'outros') return 'Outros — Atuações Pontuais'
+  if (t.slug === 'outros') return 'Outros — Atuações do PCI'
   return t.nome
 }
 

@@ -24,7 +24,7 @@ export default async function HomePage() {
     { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Conjunto de comunidades na Zona Oeste, composto por Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.' },
     { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'ativo', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana e Ipanema.' },
     { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', status: 'ativo', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
-    { nome: 'Outros — Atuações Pontuais', slug: 'outros', status: 'ativo', descricao: 'Programas e intervenções do PCI fora dos territórios principais — atuações pontuais em diversas regiões.' },
+    { nome: 'Outros — Atuações do PCI', slug: 'outros', status: 'ativo', descricao: 'Programas e intervenções do PCI fora dos territórios principais — atuações em diversas regiões do Rio de Janeiro.' },
   ]
 
   return (

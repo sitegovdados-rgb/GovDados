@@ -29,6 +29,26 @@ export default async function PainelPage() {
             Visão executiva dos dados sociográficos, programas sociais e intervenções urbanísticas do Programa Cidade Integrada. Fontes: IBGE Censo 2022 · PCI 2025.
           </p>
         </div>
+
+        {/* KPIs globais */}
+        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4">
+              {[
+                { valor: '224.572', label: 'Beneficiados',       sub: 'pessoas atendidas' },
+                { valor: '115',     label: 'Programas',          sub: 'sociais mapeados' },
+                { valor: '231',     label: 'Projetos Urbanismo', sub: 'intervenções registradas' },
+                { valor: '13/05/2026', label: 'Atualizado',      sub: 'às 12h57' },
+              ].map((item, i) => (
+                <div key={i} style={{ padding: '16px 24px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.6rem', color: 'var(--pci-cyan)', lineHeight: 1 }}>{item.valor}</p>
+                  <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem', color: 'white', marginTop: 4 }}>{item.label}</p>
+                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.55rem', color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{item.sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </section>
 
       <PainelExecutivo

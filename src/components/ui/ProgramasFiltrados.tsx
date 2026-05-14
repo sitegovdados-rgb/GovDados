@@ -34,6 +34,16 @@ function corEixo(eixo: string) {
   return CORES_EIXO[eixo] || CORES_EIXO['default']
 }
 
+const LABEL_TERRITORIO: Record<string, string> = {
+  'Corredor do Itanhangá':      'Corredor Itanhangá',
+  'Manguinhos e Jacarezinho':   'Jacarezinho e Manguinhos',
+  'Pavão-Pavãozinho e Cantagalo': 'PPG',
+  'Cinturão de Jacarepaguá':    'Cinturão de Jacarepaguá',
+  'Gardênia Azul':              'Gardênia Azul',
+  'Rio das Pedras':             'Rio das Pedras',
+  'Outros':                     'Outros',
+}
+
 const SLUGS_PROGRAMAS: Record<string, string> = {
   'Desenvolve Mulher (2022)':      '/programas/corredor-itanhanga/desenvolve-mulher-2022',
   'Reabilita 60+ — Educação Física':'/programas/corredor-itanhanga/reabilita-60',
@@ -130,7 +140,7 @@ export default function ProgramasFiltrados({ programas }: Props) {
             <label style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pci-muted)', display: 'block', marginBottom: 6 }}>Território</label>
             <select value={terrFiltro} onChange={e => setTerrFiltro(e.target.value)} style={selectStyle}>
               <option value="">Todos</option>
-              {territoriosOpcoes.map(t => <option key={t} value={t}>{t}</option>)}
+              {territoriosOpcoes.map(t => <option key={t} value={t}>{LABEL_TERRITORIO[t] || t}</option>)}
             </select>
           </div>
           <div>
