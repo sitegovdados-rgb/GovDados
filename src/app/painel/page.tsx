@@ -1,4 +1,4 @@
-import { getIndicadores, getProgramasSociais, getProgramasUrbanismo, getEquipamentos } from '@/lib/directus'
+import { getIndicadores, getProgramasTerritorio, getProgramasUrbanismo, getEquipamentos } from '@/lib/directus'
 import PainelExecutivo from '@/components/ui/PainelExecutivo'
 
 export const revalidate = 3600
@@ -11,7 +11,7 @@ export default async function PainelPage() {
 
   try {
     indicadores  = await getIndicadores()
-    programas    = await getProgramasSociais()
+    programas    = await getProgramasTerritorio()
     urbanismo    = await getProgramasUrbanismo()
     equipamentos = await getEquipamentos()
   } catch (e) { console.error(e) }

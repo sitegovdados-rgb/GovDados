@@ -36,6 +36,14 @@ function groupBy(arr: any[], key: string): Record<string, number> {
   }, {} as Record<string, number>)
 }
 
+function groupByFn(arr: any[], fn: (item: any) => string): Record<string, number> {
+  return arr.reduce((acc: Record<string, number>, item) => {
+    const k = fn(item) || 'Não informado'
+    acc[k] = (acc[k] || 0) + 1
+    return acc
+  }, {})
+}
+
 // ─── paleta ────────────────────────────────────────────────────────────────────
 const NAVY   = '#1a2a5e'
 const BLUE   = '#2563a8'
@@ -217,9 +225,9 @@ function TabPopulacao({ indicadores }: { indicadores: any[] }) {
 
 // ─── aba 2: programas ──────────────────────────────────────────────────────────
 function TabProgramas({ programas }: { programas: any[] }) {
-  const porEixo    = useMemo(() => groupBy(programas, 'eixo'), [programas])
+  const porEixo   = useMemo(() => groupByFn(programas, p => p.programa?.eixo), [programas])
   const porStatus  = useMemo(() => groupBy(programas, 'status'), [programas])
-  const porTerr    = useMemo(() => groupBy(programas, 'territorio'), [programas])
+  const porTerr   = useMemo(() => groupByFn(programas, p => p.territorio?.nome), [programas])
 
   const eixoChart    = Object.entries(porEixo).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
   const statusChart  = Object.entries(porStatus).map(([name, value]) => ({ name, value }))
@@ -308,10 +316,10 @@ function TabProgramas({ programas }: { programas: any[] }) {
             <tbody>
               {programas.map((p, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? 'white' : BG, borderBottom: `1px solid ${BORDER}` }}>
-                  <td style={{ padding: '10px 16px', color: TEXT, fontWeight: 600, maxWidth: 260 }}>{p.titulo || p.nome || '—'}</td>
-                  <td style={{ padding: '10px 16px', color: DIM, whiteSpace: 'nowrap' }}>{p.territorio || '—'}</td>
-                  <td style={{ padding: '10px 16px', color: DIM }}>{p.eixo || '—'}</td>
-                  <td style={{ padding: '10px 16px', color: DIM }}>{p.tipo || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: TEXT, fontWeight: 600, maxWidth: 260 }}>{p.programa?.titulo || p.programa?.nome || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: DIM, whiteSpace: 'nowrap' }}>{p.territorio?.nome || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: DIM }}>{p.programa?.eixo || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: DIM }}>{p.programa?.tipo || '—'}</td>
                   <td style={{ padding: '10px 16px' }}><StatusBadge status={p.status || ''} /></td>
                 </tr>
               ))}
@@ -327,7 +335,7 @@ function TabProgramas({ programas }: { programas: any[] }) {
 function TabUrbanismo({ urbanismo }: { urbanismo: any[] }) {
   const porTipo    = useMemo(() => groupBy(urbanismo, 'tipo'), [urbanismo])
   const porStatus  = useMemo(() => groupBy(urbanismo, 'status'), [urbanismo])
-  const porTerr    = useMemo(() => groupBy(urbanismo, 'territorio'), [urbanismo])
+  const porTerr    = useMemo(() => groupByFn(urbanismo, u => u.territorio?.nome), [urbanismo])
 
   const tipoChart   = Object.entries(porTipo).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
   const statusChart = Object.entries(porStatus).map(([name, value]) => ({ name, value }))
@@ -416,7 +424,7 @@ function TabUrbanismo({ urbanismo }: { urbanismo: any[] }) {
               {urbanismo.map((u, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? 'white' : BG, borderBottom: `1px solid ${BORDER}` }}>
                   <td style={{ padding: '10px 16px', color: TEXT, fontWeight: 600, maxWidth: 300 }}>{u.titulo || u.nome || '—'}</td>
-                  <td style={{ padding: '10px 16px', color: DIM, whiteSpace: 'nowrap' }}>{u.territorio || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: DIM, whiteSpace: 'nowrap' }}>{u.territorio?.nome || '—'}</td>
                   <td style={{ padding: '10px 16px', color: DIM }}>{u.tipo || '—'}</td>
                   <td style={{ padding: '10px 16px' }}><StatusBadge status={u.status || ''} /></td>
                 </tr>
@@ -432,7 +440,7 @@ function TabUrbanismo({ urbanismo }: { urbanismo: any[] }) {
 // ─── aba 4: equipamentos ───────────────────────────────────────────────────────
 function TabEquipamentos({ equipamentos }: { equipamentos: any[] }) {
   const porTipo = useMemo(() => groupBy(equipamentos, 'tipo'), [equipamentos])
-  const porTerr = useMemo(() => groupBy(equipamentos, 'territorio'), [equipamentos])
+  const porTerr = useMemo(() => groupByFn(equipamentos, eq => eq.territorio?.nome), [equipamentos])
 
   const tipoChart = Object.entries(porTipo).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
   const terrChart = Object.entries(porTerr).map(([name, value]) => ({ name: name.length > 20 ? name.slice(0, 18) + '…' : name, value })).sort((a, b) => b.value - a.value)
@@ -503,7 +511,7 @@ function TabEquipamentos({ equipamentos }: { equipamentos: any[] }) {
               {equipamentos.map((eq, i) => (
                 <tr key={i} style={{ background: i % 2 === 0 ? 'white' : BG, borderBottom: `1px solid ${BORDER}` }}>
                   <td style={{ padding: '10px 16px', color: TEXT, fontWeight: 600 }}>{eq.nome || '—'}</td>
-                  <td style={{ padding: '10px 16px', color: DIM, whiteSpace: 'nowrap' }}>{eq.territorio || '—'}</td>
+                  <td style={{ padding: '10px 16px', color: DIM, whiteSpace: 'nowrap' }}>{eq.territorio?.nome || '—'}</td>
                   <td style={{ padding: '10px 16px' }}>
                     <span className="badge badge-blue">{eq.tipo || '—'}</span>
                   </td>
