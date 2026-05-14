@@ -526,12 +526,76 @@ function TabEquipamentos({ equipamentos }: { equipamentos: any[] }) {
   )
 }
 
+// ─── aba dashboard looker studio ──────────────────────────────────────────────
+function TabDashboard({ titulo, iframeSrc, fullUrl }: { titulo: string; iframeSrc: string; fullUrl: string }) {
+  const [loading, setLoading] = useState(true)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+        <div>
+          <p style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1.1rem', color: NAVY, marginBottom: 2 }}>{titulo}</p>
+          <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: MUTED, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Looker Studio · Google Data Studio
+          </p>
+        </div>
+        <a
+          href={fullUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily: 'JetBrains Mono',
+            fontSize: '0.65rem',
+            color: BLUE,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            padding: '8px 16px',
+            border: `1px solid ${BORDER}`,
+            borderRadius: 6,
+            textDecoration: 'none',
+            whiteSpace: 'nowrap',
+            background: 'white',
+          }}
+        >
+          Abrir em tela cheia →
+        </a>
+      </div>
+
+      <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 24px rgba(26,42,94,0.10)', border: `1px solid ${BORDER}` }}>
+        {loading && (
+          <div style={{
+            position: 'absolute', inset: 0, minHeight: 800,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: BG, zIndex: 1,
+          }}>
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: 16 }}>📊</div>
+              <p style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '1rem', color: NAVY, marginBottom: 8 }}>Carregando dashboard…</p>
+              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: MUTED, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                Aguarde enquanto o Looker Studio é inicializado
+              </p>
+            </div>
+          </div>
+        )}
+        <iframe
+          src={iframeSrc}
+          style={{ width: '100%', minHeight: 800, border: 'none', display: 'block' }}
+          onLoad={() => setLoading(false)}
+          allowFullScreen
+        />
+      </div>
+    </div>
+  )
+}
+
 // ─── componente principal ──────────────────────────────────────────────────────
 const TABS = [
-  { id: 'populacao',    label: 'População',    icon: '👥' },
-  { id: 'programas',   label: 'Programas',    icon: '📋' },
-  { id: 'urbanismo',   label: 'Urbanismo',    icon: '🏗️' },
-  { id: 'equipamentos',label: 'Equipamentos', icon: '🏥' },
+  { id: 'populacao',      label: 'População',           icon: '👥' },
+  { id: 'programas',      label: 'Programas',           icon: '📋' },
+  { id: 'urbanismo',      label: 'Urbanismo',           icon: '🏗️' },
+  { id: 'equipamentos',   label: 'Equipamentos',        icon: '🏥' },
+  { id: 'dash-social',    label: 'Dashboard Social',    icon: '📊' },
+  { id: 'dash-urbanismo', label: 'Dashboard Urbanismo', icon: '🏙️' },
 ]
 
 export default function PainelExecutivo({ indicadores, programas, urbanismo, equipamentos }: Props) {
@@ -574,7 +638,7 @@ export default function PainelExecutivo({ indicadores, programas, urbanismo, equ
               >
                 <span>{tab.icon}</span>
                 {tab.label}
-                {active && (
+                {active && !tab.id.startsWith('dash-') && (
                   <span style={{
                     fontFamily: 'JetBrains Mono, monospace',
                     fontSize: '0.6rem',
@@ -614,10 +678,24 @@ export default function PainelExecutivo({ indicadores, programas, urbanismo, equ
 
         {/* Abas */}
         <div className="anim-up">
-          {aba === 'populacao'    && <TabPopulacao    indicadores={indicadores}   />}
-          {aba === 'programas'    && <TabProgramas    programas={programas}       />}
-          {aba === 'urbanismo'    && <TabUrbanismo    urbanismo={urbanismo}       />}
-          {aba === 'equipamentos' && <TabEquipamentos equipamentos={equipamentos} />}
+          {aba === 'populacao'      && <TabPopulacao    indicadores={indicadores}   />}
+          {aba === 'programas'      && <TabProgramas    programas={programas}       />}
+          {aba === 'urbanismo'      && <TabUrbanismo    urbanismo={urbanismo}       />}
+          {aba === 'equipamentos'   && <TabEquipamentos equipamentos={equipamentos} />}
+          {aba === 'dash-social'    && (
+            <TabDashboard
+              titulo="Dashboard Social"
+              iframeSrc="https://lookerstudio.google.com/embed/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00/page/1"
+              fullUrl="https://datastudio.google.com/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00"
+            />
+          )}
+          {aba === 'dash-urbanismo' && (
+            <TabDashboard
+              titulo="Dashboard Urbanismo"
+              iframeSrc="https://lookerstudio.google.com/embed/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3/page/1"
+              fullUrl="https://datastudio.google.com/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3"
+            />
+          )}
         </div>
       </div>
 
