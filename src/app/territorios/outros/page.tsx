@@ -13,8 +13,8 @@ export default async function OutrosPage() {
   } catch (e) { console.error(e) }
 
   const eixos = [...new Set(programas.map((p: any) => p.eixo).filter(Boolean))].sort() as string[]
-  const executados = urbanismo.filter((u: any) => u.status === 'Executado').length
-  const planejados = urbanismo.filter((u: any) => u.status === 'Planejado').length
+  const executados = urbanismo.filter((u: any) => u.status === 'Concluído').length
+  const planejados = urbanismo.filter((u: any) => u.status === 'Em execução').length
 
   return (
     <div>
@@ -122,10 +122,10 @@ export default async function OutrosPage() {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {urbanismo.map((u: any) => (
-                <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Executado' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
+                <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Concluído' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
-                    <span className="pci-tag">{u.tipo}</span>
-                    <span className={`badge ${u.status === 'Executado' ? 'badge-green' : 'badge-amber'}`}>{u.status}</span>
+                    <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                    <span className={`badge ${u.status === 'Concluído' ? 'badge-green' : u.status === 'Em execução' ? 'badge-blue' : 'badge-amber'}`}>{u.status}</span>
                   </div>
                   <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 4 }}>{u.titulo}</h3>
                   {u.descricao && (

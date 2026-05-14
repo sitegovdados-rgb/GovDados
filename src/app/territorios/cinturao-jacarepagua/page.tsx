@@ -22,8 +22,8 @@ export default async function CinturaoPage() {
   const totalPop = indPopTotal.filter((i: any) => i.nome?.startsWith('População estimada')).reduce((acc: number, i: any) => acc + (i.valor || 0), 0)
 
   const tiposEquip = [...new Set(equipamentos.map((e: any) => e.tipo))].sort()
-  const urbanismoExecutado = urbanismo.filter((u: any) => u.status === 'Executado')
-  const urbanismoPlanejado = urbanismo.filter((u: any) => u.status === 'Planejado')
+  const urbanismoExecutado = urbanismo.filter((u: any) => u.status === 'Concluído')
+  const urbanismoPlanejado = urbanismo.filter((u: any) => u.status === 'Não iniciado' || u.status === 'Em execução')
 
   return (
     <div>
@@ -204,10 +204,10 @@ export default async function CinturaoPage() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {urbanismo.slice(0, 8).map((u: any) => (
-              <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Executado' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
+              <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Concluído' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 8 }}>
-                  <span className="pci-tag">{u.tipo}</span>
-                  <span className={`badge ${u.status === 'Executado' ? 'badge-green' : 'badge-amber'}`}>{u.status}</span>
+                  <span className="pci-tag">{u.tipologia || u.tipo || '—'}</span>
+                  <span className={`badge ${u.status === 'Concluído' ? 'badge-green' : u.status === 'Em execução' ? 'badge-blue' : 'badge-amber'}`}>{u.status}</span>
                 </div>
                 <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6 }}>{u.titulo}</h3>
                 <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'var(--pci-dim)', lineHeight: 1.5 }}>{u.descricao}</p>
