@@ -8,9 +8,11 @@ const links = [
   { href: '/territorios',     label: 'Territórios' },
   { href: '/programas',       label: 'Programas Sociais' },
   { href: '/urbanismo',       label: 'Urbanismo' },
-  { href: '/painel',          label: 'Painel de Dados' },
-  { href: '/repositorio',     label: 'Repositório' },
-  { href: '/dados',           label: 'Dados Abertos' },
+  { href: '/painel',             label: 'Painel de Dados' },
+  { href: '/dashboard/social',   label: 'Dashboard Social' },
+  { href: '/dashboard/urbanismo',label: 'Dashboard Urbanismo' },
+  { href: '/repositorio',        label: 'Repositório' },
+  { href: '/dados',              label: 'Dados Abertos' },
 ]
 
 export default function Navbar() {
