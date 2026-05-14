@@ -78,9 +78,10 @@ export async function getIndicadoresPorSlug(territorioSlug: string) {
 
 // ─── Programas Sociais ────────────────────────────────────────────────────────
 
-// Busca todos os programas sociais (base)
-export async function getProgramasSociais() {
-  return fetchDirectus('/items/programas_sociais?limit=200&sort=eixo,titulo')
+// Busca todos os programas sociais (base), com territorio expandido
+export async function getProgramasSociais(territorioId?: number) {
+  const filter = territorioId ? `?filter[territorio][_eq]=${territorioId}&limit=200&sort=eixo,titulo` : '?limit=200&sort=eixo,titulo'
+  return fetchDirectus(`/items/programas_sociais${filter}&fields=*,territorio.id,territorio.nome,territorio.slug`)
 }
 
 // Busca vínculos programa×território com dados do programa

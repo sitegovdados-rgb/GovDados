@@ -5,8 +5,6 @@ interface Props {
   urbanismo: any[]
 }
 
-const TERRITORIOS = ['Todos', 'Cinturão de Jacarepaguá', 'Gardênia Azul', 'Rio das Pedras', 'Corredor do Itanhangá']
-
 export default function UrbanismoFiltrado({ urbanismo }: Props) {
   const [busca, setBusca]           = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('Todos')
@@ -15,6 +13,11 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
 
   const tipos = useMemo(() =>
     ['Todos', ...Array.from(new Set(urbanismo.map((u) => u.tipo))).sort()],
+    [urbanismo]
+  )
+
+  const territorios = useMemo(() =>
+    ['Todos', ...Array.from(new Set(urbanismo.map(u => u.territorio?.nome).filter(Boolean) as string[])).sort()],
     [urbanismo]
   )
 
@@ -45,7 +48,7 @@ export default function UrbanismoFiltrado({ urbanismo }: Props) {
           ))}
           {[
             { label: 'Tipo', value: tipoFiltro, onChange: setTipoFiltro, opts: tipos },
-            { label: 'Território', value: terrFiltro, onChange: setTerrFiltro, opts: TERRITORIOS },
+            { label: 'Território', value: terrFiltro, onChange: setTerrFiltro, opts: territorios },
             { label: 'Status', value: statusFiltro, onChange: setStatusFiltro, opts: ['Todos', 'Executado', 'Planejado'] },
           ].map((f, i) => (
             <div key={i}>

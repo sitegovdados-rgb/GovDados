@@ -46,7 +46,7 @@ export default async function CinturaoPage() {
             Cinturão de Jacarepaguá
           </h1>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
-            Conjunto de comunidades na Zona Oeste do Rio de Janeiro, composto por três territórios: Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.
+            Conjunto de comunidades na Zona Oeste do Rio de Janeiro, composto por três áreas: Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <span className="pci-tag-navy">XVI Região Administrativa</span>
@@ -61,7 +61,7 @@ export default async function CinturaoPage() {
             <div className="grid grid-cols-2 md:grid-cols-4">
               {[
                 { valor: totalPop > 0 ? totalPop.toLocaleString('pt-BR') : '111.552', label: 'Habitantes', sub: 'Censo IBGE 2022' },
-                { valor: String(subTerritorios.length || 3), label: 'Territórios', sub: 'Gardênia Azul · Rio das Pedras · Corredor Itanhangá' },
+                { valor: String(subTerritorios.length || 3), label: 'Áreas', sub: 'Gardênia Azul · Rio das Pedras · Corredor Itanhangá' },
                 { valor: String(programas.length || 16), label: 'Programas sociais', sub: 'em andamento e realizados' },
                 { valor: String(urbanismo.length || 18), label: 'Intervenções', sub: 'urbanísticas mapeadas' },
               ].map((item, i) => (
@@ -103,9 +103,9 @@ export default async function CinturaoPage() {
 
         <section className="mb-14">
           <div className="pci-accent-line" />
-          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 6 }}>Territórios</h2>
+          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 6 }}>Áreas</h2>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
-            Cada território agrupa um conjunto de favelas com características geográficas e históricas próximas.
+            Cada área agrupa um conjunto de favelas com características geográficas e históricas próximas.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {subTerritorios.map((st: any) => (
@@ -126,7 +126,7 @@ export default async function CinturaoPage() {
                 )}
                 <Link href={`/territorios/cinturao-jacarepagua/${st.slug}`}
                   style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.8rem', color: 'var(--pci-blue)', display: 'block', marginTop: 16 }}>
-                  Ver território →
+                  Ver área →
                 </Link>
               </div>
             ))}

@@ -7,7 +7,6 @@ interface Programa {
   id: number
   titulo: string
   descricao: string
-  area_tematica: string
   eixo: string
   tipo: string
   territorio: { id: number; nome: string; slug: string } | null
@@ -41,14 +40,6 @@ const SLUGS_PROGRAMAS: Record<string, string> = {
   'Reabilita 60+ — Fisioterapia':   '/programas/corredor-itanhanga/reabilita-60',
 }
 
-// Opções de território para o filtro (por nome do objeto relacional)
-const TERRITORIOS_OPCOES = [
-  { label: 'Todos',                    valor: '' },
-  { label: 'Cinturão de Jacarepaguá',  valor: 'Cinturão de Jacarepaguá' },
-  { label: 'Gardênia Azul',            valor: 'Gardênia Azul' },
-  { label: 'Rio das Pedras',           valor: 'Rio das Pedras' },
-  { label: 'Corredor do Itanhangá',    valor: 'Corredor do Itanhangá' },
-]
 
 function matchTerritorio(p: Programa, filtro: string): boolean {
   if (!filtro) return true
@@ -65,6 +56,11 @@ export default function ProgramasFiltrados({ programas }: Props) {
 
   const eixos = useMemo(() =>
     ['', ...Array.from(new Set(programas.map(p => p.eixo || 'Social'))).sort()],
+    [programas]
+  )
+
+  const territoriosOpcoes = useMemo(() =>
+    Array.from(new Set(programas.map(p => p.territorio?.nome).filter(Boolean) as string[])).sort(),
     [programas]
   )
 
@@ -105,8 +101,8 @@ export default function ProgramasFiltrados({ programas }: Props) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'Programas',      valor: filtrados.length },
-          { label: 'Em andamento',   valor: filtrados.filter(p => p.status === 'Em Andamento').length },
-          { label: 'Realizados',     valor: filtrados.filter(p => p.status === 'Realizado' || p.status === 'Concluída').length },
+          { label: 'Em execução',    valor: filtrados.filter(p => p.status === 'Em execução').length },
+          { label: 'Concluídos',     valor: filtrados.filter(p => p.status === 'Concluída').length },
           { label: 'Beneficiários',  valor: totalBenef > 1000 ? (totalBenef/1000).toFixed(1)+'mil' : String(totalBenef || '—') },
         ].map((s, i) => (
           <div key={i} className="pci-card p-4 text-center">
@@ -133,15 +129,15 @@ export default function ProgramasFiltrados({ programas }: Props) {
           <div>
             <label style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pci-muted)', display: 'block', marginBottom: 6 }}>Território</label>
             <select value={terrFiltro} onChange={e => setTerrFiltro(e.target.value)} style={selectStyle}>
-              {TERRITORIOS_OPCOES.map(t => <option key={t.valor} value={t.valor}>{t.label}</option>)}
+              <option value="">Todos</option>
+              {territoriosOpcoes.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
           </div>
           <div>
             <label style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pci-muted)', display: 'block', marginBottom: 6 }}>Status</label>
             <select value={statusFiltro} onChange={e => setStatusFiltro(e.target.value)} style={selectStyle}>
               <option value="">Todos</option>
-              <option>Em Andamento</option>
-              <option>Realizado</option>
+              <option>Em execução</option>
               <option>Concluída</option>
             </select>
           </div>
@@ -198,7 +194,7 @@ export default function ProgramasFiltrados({ programas }: Props) {
                     <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '2px 8px', borderRadius: 4, background: cor + '18', color: cor, border: `1px solid ${cor}40` }}>
                       {eixo}
                     </span>
-                    <span className={`badge ${p.status === 'Em Andamento' ? 'badge-green' : p.status === 'Realizado' || p.status === 'Concluída' ? 'badge-blue' : 'badge-gray'}`}>
+                    <span className={`badge ${p.status === 'Em execução' ? 'badge-green' : p.status === 'Concluída' ? 'badge-blue' : 'badge-gray'}`}>
                       {p.status}
                     </span>
                   </div>

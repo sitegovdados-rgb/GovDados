@@ -1,11 +1,24 @@
-import { getProgramasSociais } from '@/lib/directus'
+import { getProgramasTerritorio } from '@/lib/directus'
 import ProgramasFiltrados from '@/components/ui/ProgramasFiltrados'
 
 export const revalidate = 3600
 
 export default async function ProgramasPage() {
-  let programas: any[] = []
-  try { programas = await getProgramasSociais() } catch (e) { console.error(e) }
+  let juncao: any[] = []
+  try { juncao = await getProgramasTerritorio() } catch (e) { console.error(e) }
+
+  const programas = juncao.map(p => ({
+    id: p.id,
+    titulo: p.programa?.titulo || '',
+    descricao: p.programa?.descricao || '',
+    eixo: p.programa?.eixo || 'Social',
+    tipo: p.programa?.tipo || '',
+    territorio: p.territorio || null,
+    beneficiarios: p.beneficiarios ?? p.programa?.beneficiarios ?? null,
+    unidade_beneficiarios: p.unidade_beneficiarios ?? p.programa?.unidade_beneficiarios ?? null,
+    periodo: p.periodo ?? p.programa?.periodo ?? '',
+    status: p.status ?? p.programa?.status ?? '',
+  }))
 
   const total = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
 
@@ -23,8 +36,8 @@ export default async function ProgramasPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {[
           { valor: programas.length, label: 'Programas', sub: 'cadastrados' },
-          { valor: programas.filter((p: any) => p.status === 'Em Andamento').length, label: 'Em andamento', sub: 'atualmente ativos' },
-          { valor: total > 1000 ? (total / 1000).toFixed(0) + 'mil+' : total, label: 'Beneficiários', sub: 'atendidos' },
+          { valor: programas.filter((p: any) => p.status === 'Em execução').length, label: 'Em execução', sub: 'atualmente ativos' },
+          { valor: total > 1000 ? (total / 1000).toFixed(0) + 'mil+' : String(total || '—'), label: 'Beneficiários', sub: 'atendidos' },
         ].map((s, i) => (
           <div key={i} className="pci-card p-6 text-center">
             <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '2rem', color: 'var(--pci-navy)' }}>{s.valor}</p>

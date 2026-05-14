@@ -20,10 +20,11 @@ export default async function HomePage() {
 
   const totalBeneficiarios = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
 
-  const territoriosList = territorios.length > 0 ? territorios : [
-    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Conjunto de comunidades na Zona Oeste do Rio de Janeiro, composto por Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.' },
-    { nome: 'Manguinhos e Jacarezinho', slug: 'manguinhos-jacarezinho', status: 'em_breve', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
-    { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'em_breve', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana e Ipanema.' },
+  const territoriosList = [
+    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Conjunto de comunidades na Zona Oeste, composto por Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.' },
+    { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'ativo', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana e Ipanema.' },
+    { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', status: 'ativo', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
+    { nome: 'Outros — Atuações Pontuais', slug: 'outros', status: 'ativo', descricao: 'Programas e intervenções do PCI fora dos territórios principais — atuações pontuais em diversas regiões.' },
   ]
 
   return (
@@ -54,7 +55,7 @@ export default async function HomePage() {
           </div>
 
           {/* Cards de territórios dentro do hero */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
             {territoriosList.map((t: any) => (
               <div key={t.slug} className="hero-card" style={{
                 background: 'rgba(255,255,255,0.10)',
@@ -69,11 +70,11 @@ export default async function HomePage() {
                     fontFamily: 'JetBrains Mono', fontSize: '0.58rem',
                     textTransform: 'uppercase', letterSpacing: '0.08em',
                     padding: '2px 8px', borderRadius: 4,
-                    background: t.status === 'ativo' ? 'rgba(22,163,74,0.25)' : 'rgba(255,255,255,0.1)',
-                    color: t.status === 'ativo' ? '#86efac' : 'rgba(255,255,255,0.5)',
-                    border: `1px solid ${t.status === 'ativo' ? 'rgba(22,163,74,0.4)' : 'rgba(255,255,255,0.15)'}`,
+                    background: 'rgba(22,163,74,0.25)',
+                    color: '#86efac',
+                    border: '1px solid rgba(22,163,74,0.4)',
                   }}>
-                    {t.status === 'ativo' ? 'Ativo' : 'Em breve'}
+                    Ativo
                   </span>
                 </div>
                 <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'white', marginBottom: 8, lineHeight: 1.3 }}>
@@ -82,18 +83,12 @@ export default async function HomePage() {
                 <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, marginBottom: 16 }}>
                   {t.descricao}
                 </p>
-                {t.status === 'ativo' ? (
-                  <Link href={`/territorios/${t.slug}`} style={{
-                    fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem',
-                    color: 'var(--pci-cyan)', display: 'inline-flex', alignItems: 'center', gap: 4,
-                  }}>
-                    Explorar território →
-                  </Link>
-                ) : (
-                  <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                    Em desenvolvimento
-                  </span>
-                )}
+                <Link href={`/territorios/${t.slug}`} style={{
+                  fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem',
+                  color: 'var(--pci-cyan)', display: 'inline-flex', alignItems: 'center', gap: 4,
+                }}>
+                  {t.slug === 'outros' ? 'Ver atuações →' : 'Explorar território →'}
+                </Link>
               </div>
             ))}
           </div>
