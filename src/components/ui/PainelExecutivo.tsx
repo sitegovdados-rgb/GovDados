@@ -685,14 +685,14 @@ export default function PainelExecutivo({ indicadores, programas, urbanismo, equ
           {aba === 'dash-social'    && (
             <TabDashboard
               titulo="Dashboard Social"
-              iframeSrc="https://lookerstudio.google.com/embed/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00/page/1"
+              iframeSrc="https://lookerstudio.google.com/embed/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00/page/oeAvF"
               fullUrl="https://datastudio.google.com/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00"
             />
           )}
           {aba === 'dash-urbanismo' && (
             <TabDashboard
               titulo="Dashboard Urbanismo"
-              iframeSrc="https://lookerstudio.google.com/embed/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3/page/1"
+              iframeSrc="https://lookerstudio.google.com/embed/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3/page/Wa7xF"
               fullUrl="https://datastudio.google.com/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3"
             />
           )}
