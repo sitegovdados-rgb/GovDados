@@ -13,7 +13,11 @@ function nomeDisplay(t: any): string {
   return t.nome
 }
 
-const SLUGS_ATIVOS = new Set(['cinturao-jacarepagua', 'ppg', 'jacarezinho-manguinhos', 'outros'])
+const SLUGS_ATIVOS = new Set(['cinturao-jacarepagua', 'ppg', 'jacarezinho-manguinhos', 'manguinhos-jacarezinho', 'outros'])
+
+const SLUG_HREF: Record<string, string> = {
+  'manguinhos-jacarezinho': 'jacarezinho-manguinhos',
+}
 
 export default async function TerritoriosPage() {
   let territorios: any[] = []
@@ -72,7 +76,7 @@ export default async function TerritoriosPage() {
                 )}
               </div>
               {SLUGS_ATIVOS.has(t.slug) && (
-                <Link href={`/territorios/${t.slug}`} className="pci-btn" style={{ whiteSpace: 'nowrap' }}>
+                <Link href={`/territorios/${SLUG_HREF[t.slug] || t.slug}`} className="pci-btn" style={{ whiteSpace: 'nowrap' }}>
                   {t.slug === 'outros' ? 'Ver atuações →' : 'Explorar território →'}
                 </Link>
               )}

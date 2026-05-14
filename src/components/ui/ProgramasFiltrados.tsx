@@ -34,14 +34,19 @@ function corEixo(eixo: string) {
   return CORES_EIXO[eixo] || CORES_EIXO['default']
 }
 
-const LABEL_TERRITORIO: Record<string, string> = {
-  'Corredor do Itanhangá':      'Corredor Itanhangá',
-  'Manguinhos e Jacarezinho':   'Jacarezinho e Manguinhos',
-  'Pavão-Pavãozinho e Cantagalo': 'PPG',
-  'Cinturão de Jacarepaguá':    'Cinturão de Jacarepaguá',
-  'Gardênia Azul':              'Gardênia Azul',
-  'Rio das Pedras':             'Rio das Pedras',
-  'Outros':                     'Outros',
+const TERR_OPCOES_PROGRAMAS = [
+  '',
+  'Corredor Itanhangá / Rio das Pedras',
+  'Jacarezinho e Manguinhos',
+  'PPG',
+  'Outros',
+]
+
+const TERR_MATCH: Record<string, string[]> = {
+  'Corredor Itanhangá / Rio das Pedras': ['Corredor do Itanhangá', 'Corredor Itanhangá', 'Rio das Pedras'],
+  'Jacarezinho e Manguinhos':            ['Manguinhos e Jacarezinho', 'Jacarezinho e Manguinhos'],
+  'PPG':                                 ['Pavão-Pavãozinho e Cantagalo', 'PPG'],
+  'Outros':                              ['Outros'],
 }
 
 const SLUGS_PROGRAMAS: Record<string, string> = {
@@ -53,8 +58,9 @@ const SLUGS_PROGRAMAS: Record<string, string> = {
 
 function matchTerritorio(p: Programa, filtro: string): boolean {
   if (!filtro) return true
-  const campos = [p.territorio?.nome, p.descricao, p.titulo].join(' ')
-  return campos.includes(filtro)
+  const terr = p.territorio?.nome || ''
+  const matches = TERR_MATCH[filtro] || [filtro]
+  return matches.some(m => terr.includes(m))
 }
 
 export default function ProgramasFiltrados({ programas }: Props) {
@@ -66,11 +72,6 @@ export default function ProgramasFiltrados({ programas }: Props) {
 
   const eixos = useMemo(() =>
     ['', ...Array.from(new Set(programas.map(p => p.eixo || 'Social'))).sort()],
-    [programas]
-  )
-
-  const territoriosOpcoes = useMemo(() =>
-    Array.from(new Set(programas.map(p => p.territorio?.nome).filter(Boolean) as string[])).sort(),
     [programas]
   )
 
@@ -139,8 +140,7 @@ export default function ProgramasFiltrados({ programas }: Props) {
           <div>
             <label style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--pci-muted)', display: 'block', marginBottom: 6 }}>Território</label>
             <select value={terrFiltro} onChange={e => setTerrFiltro(e.target.value)} style={selectStyle}>
-              <option value="">Todos</option>
-              {territoriosOpcoes.map(t => <option key={t} value={t}>{LABEL_TERRITORIO[t] || t}</option>)}
+              {TERR_OPCOES_PROGRAMAS.map(t => <option key={t} value={t}>{t || 'Todos'}</option>)}
             </select>
           </div>
           <div>

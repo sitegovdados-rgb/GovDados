@@ -105,8 +105,8 @@ export async function getProgramasPorSlug(territorioSlug: string) {
 // Busca projetos urbanismo por ID de território
 export async function getProgramasUrbanismo(territorioId?: number) {
   const filter = territorioId
-    ? `?filter[territorio][_eq]=${territorioId}&limit=100`
-    : '?limit=200&sort=status,titulo'
+    ? `?filter[territorio][_eq]=${territorioId}&limit=300`
+    : '?limit=300&sort=status,titulo'
   return fetchDirectus(`/items/programas_urbanismo${filter}&fields=*,territorio.id,territorio.nome,territorio.slug`)
 }
 
