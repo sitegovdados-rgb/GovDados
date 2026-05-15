@@ -6,6 +6,7 @@ export default function LoginPage() {
   const [senha, setSenha]     = useState('')
   const [erro, setErro]       = useState(false)
   const [loading, setLoading] = useState(false)
+  const [exitAnimation, setExitAnimation] = useState(false)
   const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
@@ -20,8 +21,11 @@ export default function LoginPage() {
     })
 
     if (res.ok) {
-      router.push('/')
-      router.refresh()
+      setExitAnimation(true)
+      setTimeout(() => {
+        router.push('/')
+        router.refresh()
+      }, 600)
     } else {
       setErro(true)
       setLoading(false)
@@ -30,7 +34,9 @@ export default function LoginPage() {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center px-4" 
+      className={`min-h-screen flex items-center justify-center px-4 transition-all duration-600 ${
+        exitAnimation ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
+      }`}
       style={{ 
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f4c75 100%)',
       }}
@@ -73,6 +79,7 @@ export default function LoginPage() {
                 placeholder="••••••••••••••••••"
                 required
                 autoFocus
+                disabled={loading || exitAnimation}
                 className="w-full px-4 py-3 rounded-lg border outline-none text-sm transition-colors focus:ring-2 focus:ring-offset-2"
                 style={{
                   background: 'rgba(15, 23, 42, 0.6)',
@@ -96,17 +103,17 @@ export default function LoginPage() {
             </div>
             <button
               type="submit"
-              disabled={loading || !senha}
+              disabled={loading || !senha || exitAnimation}
               className="w-full py-3 rounded-lg font-body font-semibold text-sm text-white transition-all duration-200 hover:shadow-lg"
               style={{
-                background: loading || !senha 
+                background: loading || !senha || exitAnimation
                   ? 'rgba(148, 163, 184, 0.5)' 
                   : 'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)',
-                cursor: loading || !senha ? 'not-allowed' : 'pointer',
-                opacity: loading || !senha ? 0.7 : 1,
+                cursor: loading || !senha || exitAnimation ? 'not-allowed' : 'pointer',
+                opacity: loading || !senha || exitAnimation ? 0.7 : 1,
               }}
             >
-              {loading ? '⌛ Verificando...' : '→ Entrar'}
+              {exitAnimation ? '✓ Redirecionando...' : loading ? '⌛ Verificando...' : '→ Entrar'}
             </button>
           </form>
         </div>
