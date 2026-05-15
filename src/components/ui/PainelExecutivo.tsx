@@ -14,7 +14,7 @@ interface Props {
   equipamentos: any[]
 }
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+// ─── helpers ───────────────────────────────────────────────────────────────────
 function fmt(n: number | string | null | undefined): string {
   if (n == null || n === '') return '—'
   const num = typeof n === 'string' ? parseFloat(n.replace(/\./g, '').replace(',', '.')) : n
@@ -59,7 +59,7 @@ const AMBER  = '#d97706'
 
 const CHART_COLORS = [CYAN, BLUE, NAVY, '#0e7490', '#0369a1', '#1d4ed8']
 
-// ─── subcomponentes ────────────────────────────────────────────────────────────
+// ─── subcomponentes ───────────────────────────────────────────────────────────
 function KPI({ label, value, sub, accent }: { label: string; value: string | number; sub?: string; accent?: string }) {
   return (
     <div className="pci-card" style={{ padding: '20px 24px' }}>
@@ -101,7 +101,7 @@ function SectionTitle({ title, count: c }: { title: string; count?: number }) {
   )
 }
 
-// ─── aba 1: população ──────────────────────────────────────────────────────────
+// ─── aba 1: população ──────────────────────────────────────────────────────
 function TabPopulacao({ indicadores }: { indicadores: any[] }) {
   // agrupa por territorio para o gráfico
   const porTerritorio = useMemo(() => {
@@ -201,7 +201,9 @@ function TabPopulacao({ indicadores }: { indicadores: any[] }) {
             <thead>
               <tr style={{ background: NAVY, color: 'white' }}>
                 {['Indicador', 'Território', 'Área Temática', 'Valor', 'Unidade'].map(h => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>{h}</th>
+                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -223,7 +225,7 @@ function TabPopulacao({ indicadores }: { indicadores: any[] }) {
   )
 }
 
-// ─── aba 2: programas ──────────────────────────────────────────────────────────
+// ─── aba 2: programas ────────────────────────────────────────────────────────
 function TabProgramas({ programas }: { programas: any[] }) {
   const porEixo   = useMemo(() => groupByFn(programas, p => p.programa?.eixo), [programas])
   const porStatus  = useMemo(() => groupBy(programas, 'status'), [programas])
@@ -309,7 +311,9 @@ function TabProgramas({ programas }: { programas: any[] }) {
             <thead>
               <tr style={{ background: NAVY, color: 'white' }}>
                 {['Programa', 'Território', 'Eixo', 'Tipo', 'Status'].map(h => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500, whiteSpace: 'nowrap' }}>{h}</th>
+                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -331,7 +335,7 @@ function TabProgramas({ programas }: { programas: any[] }) {
   )
 }
 
-// ─── aba 3: urbanismo ──────────────────────────────────────────────────────────
+// ─── aba 3: urbanismo ────────────────────────────────────────────────────────
 function TabUrbanismo({ urbanismo }: { urbanismo: any[] }) {
   const porTipo    = useMemo(() => groupBy(urbanismo, 'tipo'), [urbanismo])
   const porStatus  = useMemo(() => groupBy(urbanismo, 'status'), [urbanismo])
@@ -416,7 +420,9 @@ function TabUrbanismo({ urbanismo }: { urbanismo: any[] }) {
             <thead>
               <tr style={{ background: NAVY, color: 'white' }}>
                 {['Projeto', 'Território', 'Tipo', 'Status'].map(h => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500, whiteSpace: 'nowrap' }}>{h}</th>
+                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -503,7 +509,9 @@ function TabEquipamentos({ equipamentos }: { equipamentos: any[] }) {
             <thead>
               <tr style={{ background: NAVY, color: 'white' }}>
                 {['Equipamento', 'Território', 'Tipo', 'Endereço'].map(h => (
-                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500, whiteSpace: 'nowrap' }}>{h}</th>
+                  <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontFamily: 'JetBrains Mono', fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 500 }}>
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -531,7 +539,7 @@ function TabDashboard({ titulo, iframeSrc, fullUrl }: { titulo: string; iframeSr
   const [loading, setLoading] = useState(true)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20, minHeight: '100vh' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <p style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1.1rem', color: NAVY, marginBottom: 2 }}>{titulo}</p>
@@ -561,10 +569,10 @@ function TabDashboard({ titulo, iframeSrc, fullUrl }: { titulo: string; iframeSr
         </a>
       </div>
 
-      <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 24px rgba(26,42,94,0.10)', border: `1px solid ${BORDER}` }}>
+      <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', boxShadow: '0 4px 24px rgba(26,42,94,0.10)', border: `1px solid ${BORDER}`, flex: 1 }}>
         {loading && (
           <div style={{
-            position: 'absolute', inset: 0, minHeight: 800,
+            position: 'absolute', inset: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: BG, zIndex: 1,
           }}>
@@ -579,7 +587,7 @@ function TabDashboard({ titulo, iframeSrc, fullUrl }: { titulo: string; iframeSr
         )}
         <iframe
           src={iframeSrc}
-          style={{ width: '100%', minHeight: 800, border: 'none', display: 'block' }}
+          style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
           onLoad={() => setLoading(false)}
           allowFullScreen
         />
@@ -660,8 +668,26 @@ export default function PainelExecutivo({ indicadores, programas, urbanismo, equ
         </div>
       </div>
 
-      {/* Conteúdo */}
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      {/* Conteúdo - Dashboards */}
+      <div style={{ display: aba.startsWith('dash-') ? 'block' : 'none', minHeight: '100vh' }}>
+        {aba === 'dash-social' && (
+          <TabDashboard
+            titulo="Dashboard Social"
+            iframeSrc="https://lookerstudio.google.com/embed/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00/page/oeAvF"
+            fullUrl="https://datastudio.google.com/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00"
+          />
+        )}
+        {aba === 'dash-urbanismo' && (
+          <TabDashboard
+            titulo="Dashboard Urbanismo"
+            iframeSrc="https://lookerstudio.google.com/embed/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3/page/Wa7xF"
+            fullUrl="https://datastudio.google.com/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3"
+          />
+        )}
+      </div>
+
+      {/* Conteúdo - Abas de dados */}
+      <div className="max-w-7xl mx-auto px-6 py-10" style={{ display: aba.startsWith('dash-') ? 'none' : 'block' }}>
         {/* Estado vazio geral */}
         {indicadores.length === 0 && programas.length === 0 && urbanismo.length === 0 && equipamentos.length === 0 && (
           <div style={{
@@ -682,20 +708,6 @@ export default function PainelExecutivo({ indicadores, programas, urbanismo, equ
           {aba === 'programas'      && <TabProgramas    programas={programas}       />}
           {aba === 'urbanismo'      && <TabUrbanismo    urbanismo={urbanismo}       />}
           {aba === 'equipamentos'   && <TabEquipamentos equipamentos={equipamentos} />}
-          {aba === 'dash-social'    && (
-            <TabDashboard
-              titulo="Dashboard Social"
-              iframeSrc="https://lookerstudio.google.com/embed/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00/page/oeAvF"
-              fullUrl="https://datastudio.google.com/reporting/c0ff2013-6c42-4bcc-bb71-1df790b00e00"
-            />
-          )}
-          {aba === 'dash-urbanismo' && (
-            <TabDashboard
-              titulo="Dashboard Urbanismo"
-              iframeSrc="https://lookerstudio.google.com/embed/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3/page/Wa7xF"
-              fullUrl="https://datastudio.google.com/reporting/73b575cf-6aff-4988-a2bd-acdaca12c4b3"
-            />
-          )}
         </div>
       </div>
 
