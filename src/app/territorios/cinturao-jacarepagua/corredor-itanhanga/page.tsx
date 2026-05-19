@@ -3,6 +3,7 @@ import { getFavelasPorSlug, getIndicadoresPorSlug, getProgramasPorSlug, getEquip
 import GaleriaMapa from '@/components/ui/GaleriaMapa'
 import TabelaDados from '@/components/ui/TabelaDados'
 import Diagnostico from '@/components/ui/Diagnostico'
+import { DashboardPCI } from '@/components/DashboardPCI'
 
 export const revalidate = 3600
 
@@ -218,6 +219,16 @@ export default async function CorredorItanhangaPage() {
                 conteudo: "O território apresenta o maior índice de alfabetização do Cinturão e forte presença de iniciativas culturais consolidadas, como o Projeto Eflorescer e o Baalaka Social, ambos com mais de uma década de atuação no Morro do Banco. O PCI já entregou oito intervenções urbanísticas no território, incluindo praças, quadra esportiva e ciclovia de 900 metros conectando Muzema e Rio das Pedras. A Clínica da Família do Morro do Banco e o CMS Itanhangá garantem cobertura de atenção primária à saúde."
               }]}
           />
+        </section>
+
+        {/* Painel de Dados PCI */}
+        <section>
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.6rem', marginBottom: 8 }}>Painel de Dados</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            Programas sociais e intervenções urbanísticas registrados para o Corredor do Itanhangá.
+          </p>
+          <DashboardPCI territorioInicial="Cinturão de Jacarepaguá" areaInicial="Corredor do Itanhangá" modoEmbutido />
         </section>
 
       </div>

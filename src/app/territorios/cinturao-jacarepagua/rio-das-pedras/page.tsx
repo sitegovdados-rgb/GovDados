@@ -3,6 +3,7 @@ import { getIndicadoresPorSlug, getProgramasPorSlug, getEquipamentosPorSlug } fr
 import GaleriaMapa from '@/components/ui/GaleriaMapa'
 import TabelaDados from '@/components/ui/TabelaDados'
 import Diagnostico from '@/components/ui/Diagnostico'
+import { DashboardPCI } from '@/components/DashboardPCI'
 
 export const revalidate = 3600
 
@@ -238,6 +239,16 @@ export default async function RiodasPedrasPage() {
                 conteudo: "O território possui cobertura de educação infantil e fundamental com unidades do município, além de clínica da família instalada. A forte coesão social e tradição de organização associativa são ativos relevantes para a implementação participativa de políticas públicas. O PCI tem um robusto portfólio de intervenções planejadas para Rio das Pedras — Complexo Multisserviços com AME, UPA e SAMU, Mercado Produtor, CRJ de Tecnologia e nova escola de ensino médio — que, quando entregues, representarão transformação significativa na oferta de serviços."
               }]}
           />
+        </section>
+
+        {/* Painel de Dados PCI */}
+        <section>
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.6rem', marginBottom: 8 }}>Painel de Dados</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            Programas sociais e intervenções urbanísticas registrados para Rio das Pedras.
+          </p>
+          <DashboardPCI territorioInicial="Cinturão de Jacarepaguá" areaInicial="Rio das Pedras" modoEmbutido />
         </section>
 
       </div>

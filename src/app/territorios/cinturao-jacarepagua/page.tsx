@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getSubTerritorios, getIndicadores, getProgramasTerritorio, getProgramasUrbanismo, getEquipamentos } from '@/lib/directus'
+import { DashboardPCI } from '@/components/DashboardPCI'
 
 export const revalidate = 3600
 
@@ -193,7 +194,7 @@ export default async function CinturaoPage() {
         </section>
 
         {/* Urbanismo */}
-        <section>
+        <section className="mb-14">
           <div className="pci-accent-line" />
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
             <h2 className="pci-title" style={{ fontSize: '1.8rem' }}>Intervenções Urbanísticas</h2>
@@ -214,6 +215,16 @@ export default async function CinturaoPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Painel de Dados PCI */}
+        <section>
+          <div className="pci-accent-line" />
+          <h2 className="pci-title" style={{ fontSize: '1.8rem', marginBottom: 8 }}>Painel de Dados</h2>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.9rem', color: 'var(--pci-dim)', marginBottom: 24 }}>
+            Programas sociais e intervenções urbanísticas do Cinturão de Jacarepaguá.
+          </p>
+          <DashboardPCI territorioInicial="Cinturão de Jacarepaguá" modoEmbutido />
         </section>
       </div>
     </div>
