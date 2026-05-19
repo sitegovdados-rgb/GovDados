@@ -101,7 +101,8 @@ type UrbanismoRow = {
 function useECharts(
   ref: React.RefObject<HTMLDivElement | null>,
   getOption: () => object,
-  deps: unknown[]
+  deps: unknown[],
+  clickRef?: { current: ((params: any) => void) | undefined }
 ) {
   useEffect(() => {
     if (!ref.current) return
@@ -109,6 +110,7 @@ function useECharts(
     if (!ec) return
     const chart = ec.init(ref.current, null, { renderer: 'canvas' })
     chart.setOption(getOption())
+    if (clickRef) chart.on('click', (p: any) => clickRef.current?.(p))
     const ro = new ResizeObserver(() => chart.resize())
     ro.observe(ref.current)
     return () => { ro.disconnect(); chart.dispose() }
@@ -117,12 +119,16 @@ function useECharts(
 }
 
 // ── Chart components ──────────────────────────────────────────────────────────
-function HBar({ data, colorFn, er }: {
+function HBar({ data, colorFn, er, selected, onClickItem }: {
   data: { name: string; value: number }[]
   colorFn?: (n: string, i: number) => string
   er: boolean
+  selected?: string | null
+  onClickItem?: (name: string) => void
 }) {
   const ref = useRef<HTMLDivElement>(null)
+  const clickRef = useRef<((params: any) => void) | undefined>(undefined)
+  useEffect(() => { clickRef.current = onClickItem ? (p: any) => onClickItem(p.name) : undefined })
   useECharts(ref, () => ({
     backgroundColor: 'transparent',
     tooltip: { ...TT, trigger: 'axis' },
@@ -141,18 +147,21 @@ function HBar({ data, colorFn, er }: {
     },
     series: [{
       type: 'bar',
+      cursor: onClickItem ? 'pointer' : 'default',
       data: data.map((d, i) => ({
         value: d.value,
-        itemStyle: { color: colorFn ? colorFn(d.name, i) : ACCENT, borderRadius: [0, 4, 4, 0] },
+        itemStyle: { color: colorFn ? colorFn(d.name, i) : ACCENT, borderRadius: [0, 4, 4, 0], opacity: selected != null && selected !== d.name ? 0.25 : 1 },
       })),
       label: { show: true, position: 'right', color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
     }],
-  }), [data, er])
+  }), [data, er, selected], onClickItem ? clickRef : undefined)
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />
 }
 
-function VBar({ data, er }: { data: { name: string; value: number; color?: string }[]; er: boolean }) {
+function VBar({ data, er, selected, onClickItem }: { data: { name: string; value: number; color?: string }[]; er: boolean; selected?: string | null; onClickItem?: (name: string) => void }) {
   const ref = useRef<HTMLDivElement>(null)
+  const clickRef = useRef<((params: any) => void) | undefined>(undefined)
+  useEffect(() => { clickRef.current = onClickItem ? (p: any) => onClickItem(p.name) : undefined })
   useECharts(ref, () => ({
     backgroundColor: 'transparent',
     tooltip: { ...TT, trigger: 'axis' },
@@ -171,17 +180,20 @@ function VBar({ data, er }: { data: { name: string; value: number; color?: strin
     },
     series: [{
       type: 'bar',
+      cursor: onClickItem ? 'pointer' : 'default',
       data: data.map(d => ({
         value: d.value,
-        itemStyle: { color: d.color || '#2563a8', borderRadius: [4, 4, 0, 0] },
+        itemStyle: { color: d.color || '#2563a8', borderRadius: [4, 4, 0, 0], opacity: selected != null && selected !== d.name ? 0.25 : 1 },
       })),
     }],
-  }), [data, er])
+  }), [data, er, selected], onClickItem ? clickRef : undefined)
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />
 }
 
-function Donut({ data, er }: { data: { name: string; value: number }[]; er: boolean }) {
+function Donut({ data, er, selected, onClickItem }: { data: { name: string; value: number }[]; er: boolean; selected?: string | null; onClickItem?: (name: string) => void }) {
   const ref = useRef<HTMLDivElement>(null)
+  const clickRef = useRef<((params: any) => void) | undefined>(undefined)
+  useEffect(() => { clickRef.current = onClickItem ? (p: any) => onClickItem(p.name) : undefined })
   useECharts(ref, () => ({
     backgroundColor: 'transparent',
     tooltip: { ...TT, trigger: 'item', formatter: '{b}: {c} ({d}%)' },
@@ -198,13 +210,14 @@ function Donut({ data, er }: { data: { name: string; value: number }[]; er: bool
       type: 'pie',
       radius: ['42%', '68%'],
       center: ['38%', '50%'],
+      cursor: onClickItem ? 'pointer' : 'default',
       data: data.map((d, i) => ({
         ...d,
-        itemStyle: { color: PIE_COLORS[i % PIE_COLORS.length], borderRadius: 3, borderWidth: 2, borderColor: BG },
+        itemStyle: { color: PIE_COLORS[i % PIE_COLORS.length], borderRadius: 3, borderWidth: 2, borderColor: BG, opacity: selected != null && selected !== d.name ? 0.25 : 1 },
       })),
       label: { show: false },
     }],
-  }), [data, er])
+  }), [data, er, selected], onClickItem ? clickRef : undefined)
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />
 }
 
@@ -294,6 +307,7 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
   const [pagina, setPagina] = useState(1)
   const [sortKey, setSortKey] = useState('tarefa')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [crossFilter, setCrossFilter] = useState<{ chartId: string; field: string; value: string } | null>(null)
 
   const statuses = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.status).filter(Boolean))).sort()], [data])
   const tipos = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.tipo).filter(Boolean))).sort()], [data])
@@ -310,39 +324,48 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
     return rows
   }, [data, territorioSel, statusFiltro, tipoFiltro, busca])
 
+  const dadosFiltrados = useMemo(() => {
+    if (!crossFilter) return filtered
+    return filtered.filter(d => (d as any)[crossFilter.field] === crossFilter.value)
+  }, [filtered, crossFilter])
+
   const kpis = useMemo(() => ({
-    total: filtered.length,
-    emExecucao: filtered.filter(d => d.status === 'Em execução').length,
-    totalAtendidos: filtered.reduce((s, d) => s + d.total, 0),
-    mediaTotal: filtered.reduce((s, d) => s + d.media, 0),
-  }), [filtered])
+    total: dadosFiltrados.length,
+    emExecucao: dadosFiltrados.filter(d => d.status === 'Em execução').length,
+    totalAtendidos: dadosFiltrados.reduce((s, d) => s + d.total, 0),
+    mediaTotal: dadosFiltrados.reduce((s, d) => s + d.media, 0),
+  }), [dadosFiltrados])
 
   const statusChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'social-status' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.status) m[d.status] = (m[d.status] || 0) + 1 })
+    src.forEach(d => { if (d.status) m[d.status] = (m[d.status] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   const tipoChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'social-tipo' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.tipo) m[d.tipo] = (m[d.tipo] || 0) + 1 })
+    src.forEach(d => { if (d.tipo) m[d.tipo] = (m[d.tipo] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value }))
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   const regiaoChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'social-regiao' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.regiao) m[d.regiao] = (m[d.regiao] || 0) + 1 })
+    src.forEach(d => { if (d.regiao) m[d.regiao] = (m[d.regiao] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   const top10Chart = useMemo(() => {
+    const src = crossFilter?.chartId === 'social-top10' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.tarefa) m[d.tarefa] = (m[d.tarefa] || 0) + d.total })
+    src.forEach(d => { if (d.tarefa) m[d.tarefa] = (m[d.tarefa] || 0) + d.total })
     return Object.entries(m).map(([name, value]) => ({ name, value }))
       .filter(d => d.value > 0)
       .sort((a, b) => b.value - a.value)
       .slice(0, 10)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   function handleSort(col: string) {
     if (sortKey === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -352,17 +375,22 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
 
   const sorted = useMemo(() => {
     const dir = sortDir === 'asc' ? 1 : -1
-    return [...filtered].sort((a, b) => {
+    return [...dadosFiltrados].sort((a, b) => {
       const av = (a as any)[sortKey] ?? ''
       const bv = (b as any)[sortKey] ?? ''
       if (typeof av === 'number') return (av - bv) * dir
       return String(av).localeCompare(String(bv), 'pt-BR') * dir
     })
-  }, [filtered, sortKey, sortDir])
+  }, [dadosFiltrados, sortKey, sortDir])
 
   const POR_PAGINA = 10
   const totalPaginas = Math.ceil(sorted.length / POR_PAGINA)
   const paginated = sorted.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
+
+  function handleCFClick(chartId: string, field: string, name: string) {
+    setCrossFilter(prev => prev?.chartId === chartId && prev.value === name ? null : { chartId, field, value: name })
+    setPagina(1)
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -386,14 +414,40 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
             {tipos.map(o => <option key={o}>{o}</option>)}
           </select>
         </div>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{filtered.length} registros</span>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{dadosFiltrados.length} registros</span>
+        {crossFilter && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,194,168,0.12)', border: '1px solid #00c2a8', borderRadius: 20, padding: '4px 14px', fontFamily: dmMono.style.fontFamily, fontSize: '0.65rem', color: '#00c2a8', alignSelf: 'center' }}>
+            Filtro do gráfico: {crossFilter.field} = {crossFilter.value}
+            <button onClick={() => setCrossFilter(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#00c2a8', padding: '0 0 0 6px', fontSize: '0.9rem', lineHeight: 1, fontFamily: 'inherit' }}>✕</button>
+          </div>
+        )}
       </div>
 
       <div className="chart-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
-        <ChartCard title="Status das Ações"><HBar data={statusChart} colorFn={n => STATUS_COLORS[n] || MUTED} er={er} /></ChartCard>
-        <ChartCard title="Tipo de Ação"><Donut data={tipoChart} er={er} /></ChartCard>
-        <ChartCard title="Ações por Território"><HBar data={regiaoChart} colorFn={n => TERR_COLORS[n] || ACCENT} er={er} /></ChartCard>
-        <ChartCard title="Top 10 Programas por Pessoas Atendidas"><HBar data={top10Chart} colorFn={() => ACCENT} er={er} /></ChartCard>
+        <ChartCard title="Status das Ações">
+          <HBar data={statusChart} colorFn={n => STATUS_COLORS[n] || MUTED} er={er}
+            selected={crossFilter?.chartId === 'social-status' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('social-status', 'status', name)}
+          />
+        </ChartCard>
+        <ChartCard title="Tipo de Ação">
+          <Donut data={tipoChart} er={er}
+            selected={crossFilter?.chartId === 'social-tipo' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('social-tipo', 'tipo', name)}
+          />
+        </ChartCard>
+        <ChartCard title="Ações por Território">
+          <HBar data={regiaoChart} colorFn={n => TERR_COLORS[n] || ACCENT} er={er}
+            selected={crossFilter?.chartId === 'social-regiao' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('social-regiao', 'regiao', name)}
+          />
+        </ChartCard>
+        <ChartCard title="Top 10 Programas por Pessoas Atendidas">
+          <HBar data={top10Chart} colorFn={() => ACCENT} er={er}
+            selected={crossFilter?.chartId === 'social-top10' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('social-top10', 'tarefa', name)}
+          />
+        </ChartCard>
       </div>
 
       <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
@@ -449,6 +503,7 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
   const [pagina, setPagina] = useState(1)
   const [sortKey, setSortKey] = useState('projeto')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
+  const [crossFilter, setCrossFilter] = useState<{ chartId: string; field: string; value: string } | null>(null)
 
   const statuses = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.status).filter(Boolean))).sort()], [data])
   const tipologias = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.tipologia).filter(Boolean))).sort()], [data])
@@ -465,36 +520,45 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
     return rows
   }, [data, territorioSel, statusFiltro, tipologiaFiltro, busca])
 
+  const dadosFiltrados = useMemo(() => {
+    if (!crossFilter) return filtered
+    return filtered.filter(d => (d as any)[crossFilter.field] === crossFilter.value)
+  }, [filtered, crossFilter])
+
   const kpis = useMemo(() => ({
-    total: filtered.length,
-    concluidos: filtered.filter(d => d.status === 'Concluído').length,
-    emExecucao: filtered.filter(d => d.status === 'Em execução').length,
-    areaProjetada: filtered.reduce((s, d) => s + d.areaProjetada, 0),
-  }), [filtered])
+    total: dadosFiltrados.length,
+    concluidos: dadosFiltrados.filter(d => d.status === 'Concluído').length,
+    emExecucao: dadosFiltrados.filter(d => d.status === 'Em execução').length,
+    areaProjetada: dadosFiltrados.reduce((s, d) => s + d.areaProjetada, 0),
+  }), [dadosFiltrados])
 
   const statusChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'urb-status' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.status) m[d.status] = (m[d.status] || 0) + 1 })
+    src.forEach(d => { if (d.status) m[d.status] = (m[d.status] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value, color: STATUS_COLORS[name] || MUTED })).sort((a, b) => b.value - a.value)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   const tipologiaChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'urb-tipologia' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.tipologia) m[d.tipologia] = (m[d.tipologia] || 0) + 1 })
+    src.forEach(d => { if (d.tipologia) m[d.tipologia] = (m[d.tipologia] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   const grauChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'urb-grau' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.grau) m[d.grau] = (m[d.grau] || 0) + 1 })
+    src.forEach(d => { if (d.grau) m[d.grau] = (m[d.grau] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   const subtipoChart = useMemo(() => {
+    const src = crossFilter?.chartId === 'urb-subtipo' ? filtered : dadosFiltrados
     const m: Record<string, number> = {}
-    filtered.forEach(d => { if (d.subtipologia) m[d.subtipologia] = (m[d.subtipologia] || 0) + 1 })
+    src.forEach(d => { if (d.subtipologia) m[d.subtipologia] = (m[d.subtipologia] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 8)
-  }, [filtered])
+  }, [filtered, dadosFiltrados, crossFilter])
 
   function handleSort(col: string) {
     if (sortKey === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
@@ -504,17 +568,22 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
 
   const sorted = useMemo(() => {
     const dir = sortDir === 'asc' ? 1 : -1
-    return [...filtered].sort((a, b) => {
+    return [...dadosFiltrados].sort((a, b) => {
       const av = (a as any)[sortKey] ?? ''
       const bv = (b as any)[sortKey] ?? ''
       if (typeof av === 'number') return (av - bv) * dir
       return String(av).localeCompare(String(bv), 'pt-BR') * dir
     })
-  }, [filtered, sortKey, sortDir])
+  }, [dadosFiltrados, sortKey, sortDir])
 
   const POR_PAGINA = 10
   const totalPaginas = Math.ceil(sorted.length / POR_PAGINA)
   const paginated = sorted.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
+
+  function handleCFClick(chartId: string, field: string, name: string) {
+    setCrossFilter(prev => prev?.chartId === chartId && prev.value === name ? null : { chartId, field, value: name })
+    setPagina(1)
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
@@ -538,14 +607,40 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
             {tipologias.map(o => <option key={o}>{o}</option>)}
           </select>
         </div>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{filtered.length} registros</span>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{dadosFiltrados.length} registros</span>
+        {crossFilter && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(0,194,168,0.12)', border: '1px solid #00c2a8', borderRadius: 20, padding: '4px 14px', fontFamily: dmMono.style.fontFamily, fontSize: '0.65rem', color: '#00c2a8', alignSelf: 'center' }}>
+            Filtro do gráfico: {crossFilter.field} = {crossFilter.value}
+            <button onClick={() => setCrossFilter(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#00c2a8', padding: '0 0 0 6px', fontSize: '0.9rem', lineHeight: 1, fontFamily: 'inherit' }}>✕</button>
+          </div>
+        )}
       </div>
 
       <div className="chart-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
-        <ChartCard title="Status dos Projetos"><VBar data={statusChart} er={er} /></ChartCard>
-        <ChartCard title="Tipologia"><Donut data={tipologiaChart} er={er} /></ChartCard>
-        <ChartCard title="Grau de Intervenção"><HBar data={grauChart} er={er} /></ChartCard>
-        <ChartCard title="Top 8 Subtipologias"><HBar data={subtipoChart} colorFn={() => ACCENT} er={er} /></ChartCard>
+        <ChartCard title="Status dos Projetos">
+          <VBar data={statusChart} er={er}
+            selected={crossFilter?.chartId === 'urb-status' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('urb-status', 'status', name)}
+          />
+        </ChartCard>
+        <ChartCard title="Tipologia">
+          <Donut data={tipologiaChart} er={er}
+            selected={crossFilter?.chartId === 'urb-tipologia' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('urb-tipologia', 'tipologia', name)}
+          />
+        </ChartCard>
+        <ChartCard title="Grau de Intervenção">
+          <HBar data={grauChart} er={er}
+            selected={crossFilter?.chartId === 'urb-grau' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('urb-grau', 'grau', name)}
+          />
+        </ChartCard>
+        <ChartCard title="Top 8 Subtipologias">
+          <HBar data={subtipoChart} colorFn={() => ACCENT} er={er}
+            selected={crossFilter?.chartId === 'urb-subtipo' ? crossFilter.value : null}
+            onClickItem={name => handleCFClick('urb-subtipo', 'subtipologia', name)}
+          />
+        </ChartCard>
       </div>
 
       <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
