@@ -10,58 +10,99 @@ const dmMono = DM_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 's
 const SOCIAL_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTmQ70z8qfPdYfDBNhP1rPKQOa8IDYvLn3cKOGHkJQAtzWxOrJDilM-3Mfx1Ufy74UI7u7THhWD5XK7/pub?output=csv'
 const URBANISMO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRWfmHpAt-Wjh-IWiAYnyu6dLaj7-vlXDKZXLXP-UsyjR-2BSqFxSf0TMXGtgheYJn5reTMFgCoVO-0/pub?output=csv'
 
-const BG = '#070e1a'
-const SURFACE = 'rgba(255,255,255,0.03)'
-const BORDER = 'rgba(255,255,255,0.07)'
+const BG = '#040810'
+const SURFACE = 'rgba(255,255,255,0.025)'
+const BORDER = 'rgba(255,255,255,0.06)'
 const TEXT = '#e8edf5'
 const MUTED = '#5577aa'
-const ACCENT = '#00a8cc'
+const ACCENT = '#00c2a8'
 
 const TERR_COLORS: Record<string, string> = {
-  'Jacarezinho e Manguinhos': '#f97316',
-  'Cinturão de Jacarepaguá': '#06b6d4',
-  'PPG': '#a855f7',
-  'Outros': '#64748b',
+  'Cinturão de Jacarepaguá': '#f5c542',
+  'Jacarezinho e Manguinhos': '#ff6b6b',
+  'Pavão-Pavãozinho e Cantagalo': '#00c2a8',
+  'PPG': '#00c2a8',
+  'Outros': '#3d9fff',
 }
+
+const TERR_BUTTONS: { label: string; value: string | null }[] = [
+  { label: 'Todos', value: null },
+  { label: 'Cinturão de Jacarepaguá', value: 'Cinturão de Jacarepaguá' },
+  { label: 'Jacarezinho e Manguinhos', value: 'Jacarezinho e Manguinhos' },
+  { label: 'Pavão-Pavãozinho e Cantagalo', value: 'PPG' },
+]
+
 const STATUS_COLORS: Record<string, string> = {
-  'Em execução': '#3b82f6', 'Concluída': '#22c55e', 'Concluído': '#22c55e',
-  'Bloqueada': '#ef4444', 'Aguardando Informação': '#f97316',
-  'Aguardando Aprovação': '#06b6d4', 'Aguardando Revisão': '#a855f7',
-  'Suspenso': '#64748b', 'Cancelado': '#ef4444',
-  'Não iniciado': '#94a3b8', 'Não Iniciado': '#94a3b8',
+  'Em execução': '#2563a8',
+  'Concluída': '#22c55e',
+  'Concluído': '#22c55e',
+  'Bloqueada': '#ef4444',
+  'Aguardando Informação': '#f59e0b',
+  'Aguardando Aprovação': '#f59e0b',
+  'Aguardando Revisão': '#a78bfa',
+  'Não iniciado': '#94a3b8',
+  'Não Iniciado': '#94a3b8',
+  'Suspenso': '#94a3b8',
+  'Cancelado': '#ef4444',
 }
-const PIE_COLORS = ['#1e40af','#2563a8','#0ea5e9','#06b6d4','#7c3aed','#8b5cf6','#0891b2','#4338ca','#6366f1','#818cf8']
+
+const PIE_COLORS = ['#0ea5e9','#2563a8','#f59e0b','#22c55e','#a78bfa','#ef4444','#06b6d4','#f97316','#818cf8','#94a3b8']
+
 const TT = {
-  backgroundColor: '#0d1929', borderColor: 'rgba(255,255,255,0.12)',
-  borderRadius: 8, textStyle: { color: TEXT, fontSize: 12, fontFamily: 'Plus Jakarta Sans, sans-serif' },
+  backgroundColor: '#0c1829',
+  borderColor: 'rgba(255,255,255,0.10)',
+  borderRadius: 8,
+  textStyle: { color: TEXT, fontSize: 12, fontFamily: 'Plus Jakarta Sans, sans-serif' },
 }
 
-// ── CSV parser ────────────────────────────────────────────────────────────────
+// ── CSV parser (multi-line aware) ─────────────────────────────────────────────
 function parseCSV(text: string): Record<string, string>[] {
-  const lines = text.replace(/^﻿/, '').split(/\r?\n/).filter(Boolean)
-  if (lines.length < 2) return []
-  const parseRow = (line: string) => {
-    const cols: string[] = []; let cur = '', inQ = false
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i]
-      if (c === '"') { if (inQ && line[i+1] === '"') { cur += '"'; i++ } else inQ = !inQ }
-      else if (c === ',' && !inQ) { cols.push(cur); cur = '' }
-      else cur += c
-    }
-    cols.push(cur); return cols
+  const rows: string[][] = []
+  let row: string[] = [], cur = '', inQ = false
+  const t = text.replace(/^﻿/, '')
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i]
+    if (c === '"') {
+      if (inQ && t[i + 1] === '"') { cur += '"'; i++ }
+      else inQ = !inQ
+    } else if (c === ',' && !inQ) {
+      row.push(cur); cur = ''
+    } else if ((c === '\n' || c === '\r') && !inQ) {
+      if (cur !== '' || row.length) { row.push(cur); rows.push(row); row = []; cur = '' }
+      if (c === '\r' && t[i + 1] === '\n') i++
+    } else cur += c
   }
-  const headers = parseRow(lines[0])
-  return lines.slice(1).map(line => {
-    const v = parseRow(line)
-    return Object.fromEntries(headers.map((h, i) => [h.trim(), (v[i] ?? '').trim()]))
-  })
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row) }
+  if (rows.length < 2) return []
+  const headers = rows[0].map(h => h.trim())
+  return rows.slice(1)
+    .filter(r => r.some(v => v.trim() !== ''))
+    .map(r => Object.fromEntries(headers.map((h, i) => [h, (r[i] || '').trim()])))
 }
 
-type SocialRow = { tarefa: string; regiao: string; responsavel: string; tipo: string; status: string; media: number; total: number }
-type UrbanismoRow = { projeto: string; demandante: string; territorio: string; tipologia: string; subtipologia: string; grau: string; status: string; inicio: string; fim: string; municipio: string }
+function toNum(v: string): number {
+  if (!v) return 0
+  const n = parseFloat(v.replace(/\./g, '').replace(',', '.'))
+  return isNaN(n) ? 0 : n
+}
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+type SocialRow = {
+  tarefa: string; area: string; regiao: string; responsavel: string
+  tipo: string; status: string; media: number; total: number
+}
+type UrbanismoRow = {
+  projeto: string; area: string; demandante: string; territorio: string
+  tipologia: string; subtipologia: string; grau: string; status: string
+  inicio: string; fim: string; areaProjetada: number
+}
 
 // ── useECharts ────────────────────────────────────────────────────────────────
-function useECharts(ref: React.RefObject<HTMLDivElement | null>, getOption: () => object, deps: unknown[]) {
+function useECharts(
+  ref: React.RefObject<HTMLDivElement | null>,
+  getOption: () => object,
+  deps: unknown[]
+) {
   useEffect(() => {
     if (!ref.current) return
     const ec = (window as any).echarts
@@ -71,44 +112,98 @@ function useECharts(ref: React.RefObject<HTMLDivElement | null>, getOption: () =
     const ro = new ResizeObserver(() => chart.resize())
     ro.observe(ref.current)
     return () => { ro.disconnect(); chart.dispose() }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }
 
-// ── Charts ────────────────────────────────────────────────────────────────────
-function HBar({ data, colorFn, er }: { data: {name:string;value:number}[]; colorFn?: (n:string,i:number)=>string; er: boolean }) {
+// ── Chart components ──────────────────────────────────────────────────────────
+function HBar({ data, colorFn, er }: {
+  data: { name: string; value: number }[]
+  colorFn?: (n: string, i: number) => string
+  er: boolean
+}) {
   const ref = useRef<HTMLDivElement>(null)
   useECharts(ref, () => ({
     backgroundColor: 'transparent',
     tooltip: { ...TT, trigger: 'axis' },
-    grid: { left: 0, right: 28, top: 4, bottom: 4, containLabel: true },
-    xAxis: { type: 'value', splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }, axisLabel: { color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily } },
-    yAxis: { type: 'category', data: data.map(d => d.name), axisLabel: { color: '#8fa3c8', fontSize: 11, fontFamily: plusJakarta.style.fontFamily }, axisTick: { show: false }, axisLine: { show: false } },
-    series: [{ type: 'bar', data: data.map((d,i) => ({ value: d.value, itemStyle: { color: colorFn ? colorFn(d.name,i) : ACCENT, borderRadius: [0,4,4,0] } })), label: { show: true, position: 'right', color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily } }],
+    grid: { left: 0, right: 40, top: 4, bottom: 4, containLabel: true },
+    xAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+      axisLabel: { color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
+    },
+    yAxis: {
+      type: 'category',
+      data: data.map(d => d.name),
+      axisLabel: { color: '#8fa3c8', fontSize: 11, fontFamily: plusJakarta.style.fontFamily, width: 160, overflow: 'truncate' },
+      axisTick: { show: false },
+      axisLine: { show: false },
+    },
+    series: [{
+      type: 'bar',
+      data: data.map((d, i) => ({
+        value: d.value,
+        itemStyle: { color: colorFn ? colorFn(d.name, i) : ACCENT, borderRadius: [0, 4, 4, 0] },
+      })),
+      label: { show: true, position: 'right', color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
+    }],
   }), [data, er])
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />
 }
 
-function VBar({ data, er }: { data: {name:string;value:number;color?:string}[]; er: boolean }) {
+function VBar({ data, er }: { data: { name: string; value: number; color?: string }[]; er: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   useECharts(ref, () => ({
     backgroundColor: 'transparent',
     tooltip: { ...TT, trigger: 'axis' },
-    grid: { left: 0, right: 8, top: 8, bottom: 64, containLabel: true },
-    xAxis: { type: 'category', data: data.map(d => d.name), axisLabel: { color: MUTED, fontSize: 10, rotate: -30, fontFamily: plusJakarta.style.fontFamily, interval: 0 }, axisTick: { show: false }, axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } } },
-    yAxis: { type: 'value', splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } }, axisLabel: { color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily } },
-    series: [{ type: 'bar', data: data.map(d => ({ value: d.value, itemStyle: { color: d.color || '#2563a8', borderRadius: [4,4,0,0] } })) }],
+    grid: { left: 0, right: 8, top: 8, bottom: 72, containLabel: true },
+    xAxis: {
+      type: 'category',
+      data: data.map(d => d.name),
+      axisLabel: { color: MUTED, fontSize: 10, rotate: -30, fontFamily: plusJakarta.style.fontFamily, interval: 0 },
+      axisTick: { show: false },
+      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
+    },
+    yAxis: {
+      type: 'value',
+      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+      axisLabel: { color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
+    },
+    series: [{
+      type: 'bar',
+      data: data.map(d => ({
+        value: d.value,
+        itemStyle: { color: d.color || '#2563a8', borderRadius: [4, 4, 0, 0] },
+      })),
+    }],
   }), [data, er])
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />
 }
 
-function Donut({ data, er }: { data: {name:string;value:number}[]; er: boolean }) {
+function Donut({ data, er }: { data: { name: string; value: number }[]; er: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
   useECharts(ref, () => ({
     backgroundColor: 'transparent',
     tooltip: { ...TT, trigger: 'item', formatter: '{b}: {c} ({d}%)' },
-    legend: { orient: 'vertical', right: 0, top: 'center', textStyle: { color: '#8fa3c8', fontSize: 11, fontFamily: plusJakarta.style.fontFamily }, icon: 'circle', itemWidth: 8, itemHeight: 8 },
-    series: [{ type: 'pie', radius: ['42%','68%'], center: ['38%','50%'], data: data.map((d,i) => ({ ...d, itemStyle: { color: PIE_COLORS[i % PIE_COLORS.length], borderRadius: 3, borderWidth: 2, borderColor: BG } })), label: { show: false } }],
+    legend: {
+      orient: 'vertical',
+      right: 0,
+      top: 'center',
+      textStyle: { color: '#8fa3c8', fontSize: 10, fontFamily: plusJakarta.style.fontFamily },
+      icon: 'circle',
+      itemWidth: 8,
+      itemHeight: 8,
+    },
+    series: [{
+      type: 'pie',
+      radius: ['42%', '68%'],
+      center: ['38%', '50%'],
+      data: data.map((d, i) => ({
+        ...d,
+        itemStyle: { color: PIE_COLORS[i % PIE_COLORS.length], borderRadius: 3, borderWidth: 2, borderColor: BG },
+      })),
+      label: { show: false },
+    }],
   }), [data, er])
   return <div ref={ref} style={{ width: '100%', height: '100%' }} />
 }
@@ -116,14 +211,21 @@ function Donut({ data, er }: { data: {name:string;value:number}[]; er: boolean }
 // ── UI atoms ──────────────────────────────────────────────────────────────────
 function StatusBadge({ status }: { status: string }) {
   const c = STATUS_COLORS[status] || '#64748b'
-  return <span style={{ display: 'inline-block', background: `${c}18`, color: c, border: `1px solid ${c}40`, fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.06em', padding: '3px 8px', borderRadius: 4 }}>{status}</span>
+  return (
+    <span style={{
+      display: 'inline-block', background: `${c}18`, color: c,
+      border: `1px solid ${c}40`, fontFamily: dmMono.style.fontFamily,
+      fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.06em',
+      padding: '3px 8px', borderRadius: 4, whiteSpace: 'nowrap',
+    }}>{status}</span>
+  )
 }
 
 function KpiCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color?: string }) {
   return (
-    <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '20px 24px', flex: 1, minWidth: 150 }}>
+    <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '20px 24px', flex: 1, minWidth: 150 }}>
       <p style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: MUTED, marginBottom: 8 }}>{label}</p>
-      <p style={{ fontFamily: dmMono.style.fontFamily, fontWeight: 500, fontSize: 'clamp(1.4rem, 3vw, 2rem)', color: color || ACCENT, lineHeight: 1 }}>{value}</p>
+      <p style={{ fontFamily: dmMono.style.fontFamily, fontWeight: 500, fontSize: 'clamp(1.3rem, 3vw, 1.85rem)', color: color || ACCENT, lineHeight: 1 }}>{value}</p>
       {sub && <p style={{ fontFamily: plusJakarta.style.fontFamily, fontSize: '0.68rem', color: MUTED, marginTop: 6 }}>{sub}</p>}
     </div>
   )
@@ -131,8 +233,8 @@ function KpiCard({ label, value, sub, color }: { label: string; value: string; s
 
 function ChartCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '20px 24px' }}>
-      <p style={{ fontFamily: dmSerif.style.fontFamily, fontSize: '1rem', color: TEXT, marginBottom: 16 }}>{title}</p>
+    <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '20px 24px' }}>
+      <p style={{ fontFamily: dmSerif.style.fontFamily, fontSize: '0.95rem', color: TEXT, marginBottom: 16 }}>{title}</p>
       <div style={{ height: 280 }}>{children}</div>
     </div>
   )
@@ -140,72 +242,80 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 
 function Spin() {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 200 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '60vh', gap: 16 }}>
       <style>{`@keyframes _sp{to{transform:rotate(360deg)}}`}</style>
       <div style={{ width: 36, height: 36, borderRadius: '50%', border: `3px solid ${BORDER}`, borderTopColor: ACCENT, animation: '_sp 0.8s linear infinite' }} />
+      <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Carregando dados do PCI...</span>
     </div>
   )
 }
 
-const FL: React.CSSProperties = { fontFamily: '', fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED, display: 'block', marginBottom: 4 }
-const FS: React.CSSProperties = { fontSize: '0.8rem', padding: '7px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', color: TEXT, minWidth: 170, cursor: 'pointer' }
-
-// ── Sidebar ───────────────────────────────────────────────────────────────────
-function Sidebar({ territories, active, onToggle, busca, onBusca }: {
-  territories: string[]; active: Set<string>
-  onToggle: (t: string) => void; busca: string; onBusca: (s: string) => void
-}) {
-  const sec: React.CSSProperties = { fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: MUTED, display: 'block', marginBottom: 10 }
+function Pagination({ page, total, onPage }: { page: number; total: number; onPage: (p: number) => void }) {
+  if (total <= 1) return null
   return (
-    <aside style={{ width: 220, flexShrink: 0, background: BG, borderRight: '1px solid rgba(255,255,255,0.06)', padding: '24px 16px', display: 'flex', flexDirection: 'column', gap: 28, overflowY: 'auto' }}>
-      <div>
-        <span style={sec}>Busca</span>
-        <input value={busca} onChange={e => onBusca(e.target.value)} placeholder="Ação, projeto..." style={{ width: '100%', boxSizing: 'border-box', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.8rem', padding: '8px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', color: TEXT, outline: 'none' }} />
-      </div>
-      <div>
-        <span style={sec}>Território</span>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {territories.map(t => {
-            const on = active.size === 0 || active.has(t)
-            const c = TERR_COLORS[t] || '#64748b'
-            return (
-              <button key={t} onClick={() => onToggle(t)} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'none', border: 'none', cursor: 'pointer', padding: '2px 0', textAlign: 'left' }}>
-                <span style={{ width: 10, height: 10, borderRadius: 2, flexShrink: 0, background: on ? c : 'rgba(255,255,255,0.08)', border: `1px solid ${on ? c : 'rgba(255,255,255,0.15)'}`, transition: 'all 0.15s' }} />
-                <span style={{ fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: on ? TEXT : MUTED, transition: 'color 0.15s', lineHeight: 1.3 }}>{t}</span>
-              </button>
-            )
-          })}
-        </div>
-      </div>
-    </aside>
+    <div style={{ padding: '12px 20px', borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
+      <button onClick={() => onPage(Math.max(1, page - 1))} disabled={page === 1}
+        style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: page === 1 ? 'not-allowed' : 'pointer', color: MUTED, opacity: page === 1 ? 0.4 : 1 }}>‹</button>
+      <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{page} / {total}</span>
+      <button onClick={() => onPage(Math.min(total, page + 1))} disabled={page === total}
+        style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: page === total ? 'not-allowed' : 'pointer', color: MUTED, opacity: page === total ? 0.4 : 1 }}>›</button>
+    </div>
+  )
+}
+
+const FL: React.CSSProperties = { fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED, display: 'block', marginBottom: 4 }
+const FS: React.CSSProperties = { fontSize: '0.8rem', padding: '7px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', color: TEXT, minWidth: 160, cursor: 'pointer' }
+
+function Th({ label, col, sortKey, sortDir, onSort }: {
+  label: string; col: string; sortKey: string; sortDir: 'asc' | 'desc'
+  onSort: (c: string) => void
+}) {
+  const active = sortKey === col
+  return (
+    <th onClick={() => onSort(col)} style={{
+      padding: '12px 16px', textAlign: 'left',
+      fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem',
+      textTransform: 'uppercase', letterSpacing: '0.08em',
+      color: active ? ACCENT : MUTED, fontWeight: 500,
+      whiteSpace: 'nowrap', borderBottom: `1px solid ${BORDER}`,
+      cursor: 'pointer', userSelect: 'none',
+    }}>
+      {label}{active ? (sortDir === 'asc' ? ' ↑' : ' ↓') : ''}
+    </th>
   )
 }
 
 // ── DashboardSocial ───────────────────────────────────────────────────────────
-function DashboardSocial({ data, loading, er, territoriosAtivos, busca }: {
-  data: SocialRow[]; loading: boolean; er: boolean; territoriosAtivos: Set<string>; busca: string
+function DashboardSocial({ data, er, territorioSel, busca }: {
+  data: SocialRow[]; er: boolean; territorioSel: string | null; busca: string
 }) {
   const [statusFiltro, setStatusFiltro] = useState('Todos')
   const [tipoFiltro, setTipoFiltro] = useState('Todos')
   const [pagina, setPagina] = useState(1)
+  const [sortKey, setSortKey] = useState('tarefa')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
   const statuses = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.status).filter(Boolean))).sort()], [data])
   const tipos = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.tipo).filter(Boolean))).sort()], [data])
 
-  const kpis = useMemo(() => ({
-    total: data.length,
-    emExecucao: data.filter(d => d.status === 'Em execução').length,
-    totalAtendidos: data.reduce((s, d) => s + d.total, 0),
-    mediaTotal: data.reduce((s, d) => s + d.media, 0),
-  }), [data])
+  const filtered = useMemo(() => {
+    let rows = data
+    if (territorioSel) rows = rows.filter(d => d.regiao === territorioSel)
+    if (statusFiltro !== 'Todos') rows = rows.filter(d => d.status === statusFiltro)
+    if (tipoFiltro !== 'Todos') rows = rows.filter(d => d.tipo === tipoFiltro)
+    if (busca) {
+      const q = busca.toLowerCase()
+      rows = rows.filter(d => d.tarefa.toLowerCase().includes(q) || d.responsavel.toLowerCase().includes(q))
+    }
+    return rows
+  }, [data, territorioSel, statusFiltro, tipoFiltro, busca])
 
-  const filtered = useMemo(() => data.filter(d => {
-    if (territoriosAtivos.size > 0 && !territoriosAtivos.has(d.regiao)) return false
-    if (statusFiltro !== 'Todos' && d.status !== statusFiltro) return false
-    if (tipoFiltro !== 'Todos' && d.tipo !== tipoFiltro) return false
-    if (busca && !d.tarefa.toLowerCase().includes(busca.toLowerCase()) && !d.responsavel.toLowerCase().includes(busca.toLowerCase())) return false
-    return true
-  }), [data, territoriosAtivos, statusFiltro, tipoFiltro, busca])
+  const kpis = useMemo(() => ({
+    total: filtered.length,
+    emExecucao: filtered.filter(d => d.status === 'Em execução').length,
+    totalAtendidos: filtered.reduce((s, d) => s + d.total, 0),
+    mediaTotal: filtered.reduce((s, d) => s + d.media, 0),
+  }), [filtered])
 
   const statusChart = useMemo(() => {
     const m: Record<string, number> = {}
@@ -225,44 +335,86 @@ function DashboardSocial({ data, loading, er, territoriosAtivos, busca }: {
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
   }, [filtered])
 
-  const POR_PAGINA = 10
-  const totalPaginas = Math.ceil(filtered.length / POR_PAGINA)
-  const paginated = filtered.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
+  const top10Chart = useMemo(() => {
+    const m: Record<string, number> = {}
+    filtered.forEach(d => { if (d.tarefa) m[d.tarefa] = (m[d.tarefa] || 0) + d.total })
+    return Object.entries(m).map(([name, value]) => ({ name, value }))
+      .filter(d => d.value > 0)
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 10)
+  }, [filtered])
 
-  if (loading) return <Spin />
+  function handleSort(col: string) {
+    if (sortKey === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortKey(col); setSortDir('asc') }
+    setPagina(1)
+  }
+
+  const sorted = useMemo(() => {
+    const dir = sortDir === 'asc' ? 1 : -1
+    return [...filtered].sort((a, b) => {
+      const av = (a as any)[sortKey] ?? ''
+      const bv = (b as any)[sortKey] ?? ''
+      if (typeof av === 'number') return (av - bv) * dir
+      return String(av).localeCompare(String(bv), 'pt-BR') * dir
+    })
+  }, [filtered, sortKey, sortDir])
+
+  const POR_PAGINA = 10
+  const totalPaginas = Math.ceil(sorted.length / POR_PAGINA)
+  const paginated = sorted.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        <KpiCard label="Total de Ações" value={kpis.total.toString()} sub="ações mapeadas" />
-        <KpiCard label="Em Execução" value={kpis.emExecucao.toString()} sub="ativas" color="#22c55e" />
+      <div className="kpi-row" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <KpiCard label="Total de Ações" value={kpis.total.toLocaleString('pt-BR')} sub="ações mapeadas" />
+        <KpiCard label="Em Execução" value={kpis.emExecucao.toLocaleString('pt-BR')} sub="ativas" color="#22c55e" />
         <KpiCard label="Pessoas Atendidas" value={kpis.totalAtendidos.toLocaleString('pt-BR')} sub="total acumulado" />
-        <KpiCard label="Média Mensal" value={kpis.mediaTotal.toLocaleString('pt-BR')} sub="atendimentos/mês" color="#a855f7" />
+        <KpiCard label="Média Mensal" value={kpis.mediaTotal.toLocaleString('pt-BR')} sub="atendimentos/mês" color="#a78bfa" />
       </div>
 
-      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '14px 20px', display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <div><label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Status</label><select value={statusFiltro} onChange={e => { setStatusFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>{statuses.map(o => <option key={o}>{o}</option>)}</select></div>
-        <div><label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Tipo</label><select value={tipoFiltro} onChange={e => { setTipoFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>{tipos.map(o => <option key={o}>{o}</option>)}</select></div>
+      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 20px', display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div>
+          <label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Status</label>
+          <select value={statusFiltro} onChange={e => { setStatusFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>
+            {statuses.map(o => <option key={o}>{o}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Tipo</label>
+          <select value={tipoFiltro} onChange={e => { setTipoFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>
+            {tipos.map(o => <option key={o}>{o}</option>)}
+          </select>
+        </div>
         <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{filtered.length} registros</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+      <div className="chart-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
         <ChartCard title="Status das Ações"><HBar data={statusChart} colorFn={n => STATUS_COLORS[n] || MUTED} er={er} /></ChartCard>
         <ChartCard title="Tipo de Ação"><Donut data={tipoChart} er={er} /></ChartCard>
-        <ChartCard title="Por Território"><HBar data={regiaoChart} colorFn={n => TERR_COLORS[n] || ACCENT} er={er} /></ChartCard>
+        <ChartCard title="Ações por Território"><HBar data={regiaoChart} colorFn={n => TERR_COLORS[n] || ACCENT} er={er} /></ChartCard>
+        <ChartCard title="Top 10 Programas por Pessoas Atendidas"><HBar data={top10Chart} colorFn={() => ACCENT} er={er} /></ChartCard>
       </div>
 
-      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr style={{ background: 'rgba(255,255,255,0.02)' }}>
-              {['Ação','Território','Responsável','Tipo','Status','Total Atendidos'].map(h => (
-                <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED, fontWeight: 500, whiteSpace: 'nowrap', borderBottom: `1px solid ${BORDER}` }}>{h}</th>
-              ))}
-            </tr></thead>
+            <thead>
+              <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <Th label="Ação" col="tarefa" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Território" col="regiao" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Área" col="area" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Responsável" col="responsavel" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Tipo" col="tipo" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Status" col="status" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Atendidos" col="total" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+              </tr>
+            </thead>
             <tbody>
-              {paginated.map((d, i) => (
-                <tr key={i} style={{ borderBottom: 'rgba(255,255,255,0.04)' }}>
+              {paginated.length === 0 ? (
+                <tr><td colSpan={7} style={{ padding: '32px 16px', textAlign: 'center', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem', color: MUTED }}>Nenhum resultado encontrado.</td></tr>
+              ) : paginated.map((d, i) => (
+                <tr key={i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.82rem', color: TEXT, maxWidth: 240 }}>{d.tarefa}</td>
                   <td style={{ padding: '11px 16px' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -270,8 +422,11 @@ function DashboardSocial({ data, loading, er, territoriosAtivos, busca }: {
                       <span style={{ fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED, whiteSpace: 'nowrap' }}>{d.regiao}</span>
                     </span>
                   </td>
+                  <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.area || '—'}</td>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.responsavel}</td>
-                  <td style={{ padding: '11px 16px' }}><span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#8fa3c8' }}>{d.tipo}</span></td>
+                  <td style={{ padding: '11px 16px' }}>
+                    <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#8fa3c8' }}>{d.tipo}</span>
+                  </td>
                   <td style={{ padding: '11px 16px' }}><StatusBadge status={d.status} /></td>
                   <td style={{ padding: '11px 16px', fontFamily: dmMono.style.fontFamily, fontSize: '0.78rem', color: TEXT, textAlign: 'right' }}>{d.total > 0 ? d.total.toLocaleString('pt-BR') : '—'}</td>
                 </tr>
@@ -279,116 +434,152 @@ function DashboardSocial({ data, loading, er, territoriosAtivos, busca }: {
             </tbody>
           </table>
         </div>
-        {totalPaginas > 1 && (
-          <div style={{ padding: '12px 20px', borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-            <button onClick={() => setPagina(p => Math.max(1, p-1))} disabled={pagina===1} style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: pagina===1?'not-allowed':'pointer', color: MUTED, opacity: pagina===1?0.4:1 }}>‹</button>
-            <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{pagina}/{totalPaginas}</span>
-            <button onClick={() => setPagina(p => Math.min(totalPaginas, p+1))} disabled={pagina===totalPaginas} style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: pagina===totalPaginas?'not-allowed':'pointer', color: MUTED, opacity: pagina===totalPaginas?0.4:1 }}>›</button>
-          </div>
-        )}
+        <Pagination page={pagina} total={totalPaginas} onPage={p => setPagina(p)} />
       </div>
     </div>
   )
 }
 
 // ── DashboardUrbanismo ────────────────────────────────────────────────────────
-function DashboardUrbanismo({ data, loading, er, territoriosAtivos, busca }: {
-  data: UrbanismoRow[]; loading: boolean; er: boolean; territoriosAtivos: Set<string>; busca: string
+function DashboardUrbanismo({ data, er, territorioSel, busca }: {
+  data: UrbanismoRow[]; er: boolean; territorioSel: string | null; busca: string
 }) {
   const [statusFiltro, setStatusFiltro] = useState('Todos')
   const [tipologiaFiltro, setTipologiaFiltro] = useState('Todos')
   const [pagina, setPagina] = useState(1)
+  const [sortKey, setSortKey] = useState('projeto')
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc')
 
   const statuses = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.status).filter(Boolean))).sort()], [data])
   const tipologias = useMemo(() => ['Todos', ...Array.from(new Set(data.map(d => d.tipologia).filter(Boolean))).sort()], [data])
 
-  const kpis = useMemo(() => ({
-    total: data.length,
-    concluidos: data.filter(d => d.status === 'Concluído').length,
-    emExecucao: data.filter(d => d.status === 'Em execução').length,
-    municipios: new Set(data.map(d => d.municipio).filter(Boolean)).size,
-  }), [data])
+  const filtered = useMemo(() => {
+    let rows = data
+    if (territorioSel) rows = rows.filter(d => d.territorio === territorioSel)
+    if (statusFiltro !== 'Todos') rows = rows.filter(d => d.status === statusFiltro)
+    if (tipologiaFiltro !== 'Todos') rows = rows.filter(d => d.tipologia === tipologiaFiltro)
+    if (busca) {
+      const q = busca.toLowerCase()
+      rows = rows.filter(d => d.projeto.toLowerCase().includes(q) || d.demandante.toLowerCase().includes(q))
+    }
+    return rows
+  }, [data, territorioSel, statusFiltro, tipologiaFiltro, busca])
 
-  const filteredRows = useMemo(() => data.filter(d => {
-    if (territoriosAtivos.size > 0 && !territoriosAtivos.has(d.territorio)) return false
-    if (statusFiltro !== 'Todos' && d.status !== statusFiltro) return false
-    if (tipologiaFiltro !== 'Todos' && d.tipologia !== tipologiaFiltro) return false
-    if (busca && !d.projeto.toLowerCase().includes(busca.toLowerCase()) && !d.demandante.toLowerCase().includes(busca.toLowerCase())) return false
-    return true
-  }), [data, territoriosAtivos, statusFiltro, tipologiaFiltro, busca])
+  const kpis = useMemo(() => ({
+    total: filtered.length,
+    concluidos: filtered.filter(d => d.status === 'Concluído').length,
+    emExecucao: filtered.filter(d => d.status === 'Em execução').length,
+    areaProjetada: filtered.reduce((s, d) => s + d.areaProjetada, 0),
+  }), [filtered])
 
   const statusChart = useMemo(() => {
     const m: Record<string, number> = {}
-    data.forEach(d => { if (d.status) m[d.status] = (m[d.status] || 0) + 1 })
+    filtered.forEach(d => { if (d.status) m[d.status] = (m[d.status] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value, color: STATUS_COLORS[name] || MUTED })).sort((a, b) => b.value - a.value)
-  }, [data])
+  }, [filtered])
 
   const tipologiaChart = useMemo(() => {
     const m: Record<string, number> = {}
-    data.forEach(d => { if (d.tipologia) m[d.tipologia] = (m[d.tipologia] || 0) + 1 })
+    filtered.forEach(d => { if (d.tipologia) m[d.tipologia] = (m[d.tipologia] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
-  }, [data])
+  }, [filtered])
 
   const grauChart = useMemo(() => {
     const m: Record<string, number> = {}
-    data.forEach(d => { if (d.grau) m[d.grau] = (m[d.grau] || 0) + 1 })
+    filtered.forEach(d => { if (d.grau) m[d.grau] = (m[d.grau] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value)
-  }, [data])
+  }, [filtered])
 
   const subtipoChart = useMemo(() => {
     const m: Record<string, number> = {}
-    data.forEach(d => { if (d.subtipologia) m[d.subtipologia] = (m[d.subtipologia] || 0) + 1 })
+    filtered.forEach(d => { if (d.subtipologia) m[d.subtipologia] = (m[d.subtipologia] || 0) + 1 })
     return Object.entries(m).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 8)
-  }, [data])
+  }, [filtered])
+
+  function handleSort(col: string) {
+    if (sortKey === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc')
+    else { setSortKey(col); setSortDir('asc') }
+    setPagina(1)
+  }
+
+  const sorted = useMemo(() => {
+    const dir = sortDir === 'asc' ? 1 : -1
+    return [...filtered].sort((a, b) => {
+      const av = (a as any)[sortKey] ?? ''
+      const bv = (b as any)[sortKey] ?? ''
+      if (typeof av === 'number') return (av - bv) * dir
+      return String(av).localeCompare(String(bv), 'pt-BR') * dir
+    })
+  }, [filtered, sortKey, sortDir])
 
   const POR_PAGINA = 10
-  const totalPaginas = Math.ceil(filteredRows.length / POR_PAGINA)
-  const paginated = filteredRows.slice((pagina-1)*POR_PAGINA, pagina*POR_PAGINA)
-
-  if (loading) return <Spin />
+  const totalPaginas = Math.ceil(sorted.length / POR_PAGINA)
+  const paginated = sorted.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-        <KpiCard label="Total de Projetos" value={kpis.total.toString()} sub="intervenções registradas" />
-        <KpiCard label="Concluídos" value={kpis.concluidos.toString()} sub="entregues" color="#22c55e" />
-        <KpiCard label="Em Execução" value={kpis.emExecucao.toString()} sub="obras ativas" />
-        <KpiCard label="Municípios" value={kpis.municipios.toString()} sub="atendidos" color="#a855f7" />
+      <div className="kpi-row" style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+        <KpiCard label="Total de Projetos" value={kpis.total.toLocaleString('pt-BR')} sub="intervenções registradas" />
+        <KpiCard label="Concluídos" value={kpis.concluidos.toLocaleString('pt-BR')} sub="entregues" color="#22c55e" />
+        <KpiCard label="Em Execução" value={kpis.emExecucao.toLocaleString('pt-BR')} sub="obras ativas" />
+        <KpiCard label="Área Projetada" value={`${kpis.areaProjetada.toLocaleString('pt-BR')} m²`} sub="total projetado" color="#a78bfa" />
       </div>
 
-      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, padding: '14px 20px', display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <div><label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Status</label><select value={statusFiltro} onChange={e => { setStatusFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>{statuses.map(o => <option key={o}>{o}</option>)}</select></div>
-        <div><label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Tipologia</label><select value={tipologiaFiltro} onChange={e => { setTipologiaFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>{tipologias.map(o => <option key={o}>{o}</option>)}</select></div>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{filteredRows.length} registros</span>
+      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '14px 20px', display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+        <div>
+          <label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Status</label>
+          <select value={statusFiltro} onChange={e => { setStatusFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>
+            {statuses.map(o => <option key={o}>{o}</option>)}
+          </select>
+        </div>
+        <div>
+          <label style={{ ...FL, fontFamily: dmMono.style.fontFamily }}>Tipologia</label>
+          <select value={tipologiaFiltro} onChange={e => { setTipologiaFiltro(e.target.value); setPagina(1) }} style={{ ...FS, fontFamily: plusJakarta.style.fontFamily }}>
+            {tipologias.map(o => <option key={o}>{o}</option>)}
+          </select>
+        </div>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{filtered.length} registros</span>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
+      <div className="chart-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 20 }}>
         <ChartCard title="Status dos Projetos"><VBar data={statusChart} er={er} /></ChartCard>
-        <ChartCard title="Tipologia do Projeto"><Donut data={tipologiaChart} er={er} /></ChartCard>
+        <ChartCard title="Tipologia"><Donut data={tipologiaChart} er={er} /></ChartCard>
         <ChartCard title="Grau de Intervenção"><HBar data={grauChart} er={er} /></ChartCard>
-        <ChartCard title="Top Subtipologias"><HBar data={subtipoChart} colorFn={() => '#06b6d4'} er={er} /></ChartCard>
+        <ChartCard title="Top 8 Subtipologias"><HBar data={subtipoChart} colorFn={() => ACCENT} er={er} /></ChartCard>
       </div>
 
-      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, overflow: 'hidden' }}>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead><tr style={{ background: 'rgba(255,255,255,0.02)' }}>
-              {['Projeto','Demandante','Território','Tipologia','Status','Início','Fim'].map(h => (
-                <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED, fontWeight: 500, whiteSpace: 'nowrap', borderBottom: `1px solid ${BORDER}` }}>{h}</th>
-              ))}
-            </tr></thead>
+            <thead>
+              <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                <Th label="Projeto" col="projeto" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Território" col="territorio" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Área" col="area" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Demandante" col="demandante" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Tipologia" col="tipologia" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Status" col="status" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Início" col="inicio" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <Th label="Fim" col="fim" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+              </tr>
+            </thead>
             <tbody>
-              {paginated.map((d, i) => (
+              {paginated.length === 0 ? (
+                <tr><td colSpan={8} style={{ padding: '32px 16px', textAlign: 'center', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem', color: MUTED }}>Nenhum resultado encontrado.</td></tr>
+              ) : paginated.map((d, i) => (
                 <tr key={i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.82rem', color: TEXT, maxWidth: 240 }}>{d.projeto}</td>
-                  <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.demandante}</td>
                   <td style={{ padding: '11px 16px' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <span style={{ width: 6, height: 6, borderRadius: '50%', background: TERR_COLORS[d.territorio] || MUTED, flexShrink: 0 }} />
                       <span style={{ fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED, whiteSpace: 'nowrap' }}>{d.territorio}</span>
                     </span>
                   </td>
-                  <td style={{ padding: '11px 16px' }}><span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#8fa3c8' }}>{d.tipologia}</span></td>
+                  <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.area || '—'}</td>
+                  <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.demandante}</td>
+                  <td style={{ padding: '11px 16px' }}>
+                    <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#8fa3c8' }}>{d.tipologia}</span>
+                  </td>
                   <td style={{ padding: '11px 16px' }}><StatusBadge status={d.status} /></td>
                   <td style={{ padding: '11px 16px', fontFamily: dmMono.style.fontFamily, fontSize: '0.75rem', color: MUTED }}>{d.inicio}</td>
                   <td style={{ padding: '11px 16px', fontFamily: dmMono.style.fontFamily, fontSize: '0.75rem', color: MUTED }}>{d.fim}</td>
@@ -397,13 +588,7 @@ function DashboardUrbanismo({ data, loading, er, territoriosAtivos, busca }: {
             </tbody>
           </table>
         </div>
-        {totalPaginas > 1 && (
-          <div style={{ padding: '12px 20px', borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
-            <button onClick={() => setPagina(p => Math.max(1, p-1))} disabled={pagina===1} style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: pagina===1?'not-allowed':'pointer', color: MUTED, opacity: pagina===1?0.4:1 }}>‹</button>
-            <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{pagina}/{totalPaginas}</span>
-            <button onClick={() => setPagina(p => Math.min(totalPaginas, p+1))} disabled={pagina===totalPaginas} style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: pagina===totalPaginas?'not-allowed':'pointer', color: MUTED, opacity: pagina===totalPaginas?0.4:1 }}>›</button>
-          </div>
-        )}
+        <Pagination page={pagina} total={totalPaginas} onPage={p => setPagina(p)} />
       </div>
     </div>
   )
@@ -414,95 +599,183 @@ export default function DashboardPage() {
   const [aba, setAba] = useState<'social' | 'urbanismo'>('social')
   const [socialData, setSocialData] = useState<SocialRow[]>([])
   const [urbanismoData, setUrbanismoData] = useState<UrbanismoRow[]>([])
-  const [loadingSocial, setLoadingSocial] = useState(true)
-  const [loadingUrbanismo, setLoadingUrbanismo] = useState(true)
+  const [loading, setLoading] = useState(true)
+  const [erro, setErro] = useState(false)
   const [er, setEr] = useState(false)
-  const [territoriosAtivos, setTerritoriosAtivos] = useState<Set<string>>(new Set())
+  const [territorioSel, setTerritorioSel] = useState<string | null>(null)
   const [busca, setBusca] = useState('')
 
   useEffect(() => {
-    fetch(SOCIAL_URL).then(r => r.text()).then(text => {
-      setSocialData(parseCSV(text).filter(r => r['Tarefa']).map(r => ({
-        tarefa: r['Tarefa'], regiao: r['territorio_rotulo'] || 'Outros',
-        responsavel: r['Responsável - Sec. / Órgão'] || '',
-        tipo: r['Tipo'] || '', status: r['Status'] || '',
-        media: Number(r['Média Atendidos (Mensal)']) || 0,
-        total: Number(r['Qtd. Total']) || 0,
-      })))
-    }).catch(() => {}).finally(() => setLoadingSocial(false))
-
-    fetch(URBANISMO_URL).then(r => r.text()).then(text => {
-      setUrbanismoData(parseCSV(text).filter(r => r['Projeto']).map(r => ({
-        projeto: r['Projeto'], demandante: r['Demandante'] || '',
-        territorio: r['territorio_rotulo'] || 'Outros',
-        tipologia: r['Tipologia'] || '', subtipologia: r['Subtipologia'] || '',
-        grau: r['Grau de Intervenção/Projeto'] || '', status: r['Status'] || '',
-        inicio: r['Data de início'] || '', fim: r['Data Final'] || '',
-        municipio: r['Município'] || '',
-      })))
-    }).catch(() => {}).finally(() => setLoadingUrbanismo(false))
+    Promise.all([
+      fetch(SOCIAL_URL, { cache: 'no-store' }).then(r => r.text()),
+      fetch(URBANISMO_URL, { cache: 'no-store' }).then(r => r.text()),
+    ]).then(([socialText, urbText]) => {
+      setSocialData(
+        parseCSV(socialText)
+          .filter(r => r['Tarefa'])
+          .map(r => ({
+            tarefa: r['Tarefa'],
+            area: r['area_rotulo'] || '',
+            regiao: r['territorio_rotulo'] || 'Outros',
+            responsavel: r['Responsável - Sec. / Órgão'] || '',
+            tipo: r['Tipo'] || '',
+            status: r['Status'] || '',
+            media: toNum(r['Média Atendidos (Mensal)']),
+            total: toNum(r['Qtd. Total']),
+          }))
+      )
+      setUrbanismoData(
+        parseCSV(urbText)
+          .filter(r => r['Projeto'])
+          .map(r => ({
+            projeto: r['Projeto'],
+            area: r['area_rotulo'] || '',
+            demandante: r['Demandante'] || '',
+            territorio: r['territorio_rotulo'] || 'Outros',
+            tipologia: r['Tipologia'] || '',
+            subtipologia: r['Subtipologia'] || '',
+            grau: r['Grau de Intervenção/Projeto'] || '',
+            status: r['Status'] || '',
+            inicio: r['Data de início'] || '',
+            fim: r['Data Final'] || '',
+            areaProjetada: toNum(r['Área Projetada (m2)']),
+          }))
+      )
+    }).catch(() => setErro(true)).finally(() => setLoading(false))
   }, [])
 
-  const allTerritories = useMemo(() => {
-    const s = new Set<string>()
-    socialData.forEach(d => d.regiao && s.add(d.regiao))
-    urbanismoData.forEach(d => d.territorio && s.add(d.territorio))
-    return Array.from(s).sort()
-  }, [socialData, urbanismoData])
-
-  function toggleTerritorio(t: string) {
-    setTerritoriosAtivos(prev => {
-      if (prev.size === 0) return new Set(allTerritories.filter(x => x !== t))
-      const next = new Set(prev)
-      if (next.has(t)) { next.delete(t); if (next.size === 0) return new Set() }
-      else { next.add(t); if (next.size === allTerritories.length) return new Set() }
-      return next
-    })
+  if (loading) {
+    return (
+      <div style={{ background: BG, minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Spin />
+      </div>
+    )
   }
 
-  const hoje = new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+  if (erro) {
+    return (
+      <div style={{ background: BG, minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ background: SURFACE, border: `1px solid ${BORDER}`, borderRadius: 10, padding: '40px 48px', textAlign: 'center', maxWidth: 480 }}>
+          <p style={{ fontFamily: dmSerif.style.fontFamily, fontSize: '1.3rem', color: TEXT, marginBottom: 10 }}>Não foi possível carregar os dados.</p>
+          <p style={{ fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem', color: MUTED, marginBottom: 24 }}>Tente recarregar a página.</p>
+          <button onClick={() => window.location.reload()} style={{ padding: '10px 24px', background: ACCENT, color: BG, border: 'none', borderRadius: 8, fontFamily: plusJakarta.style.fontFamily, fontWeight: 600, fontSize: '0.85rem', cursor: 'pointer' }}>
+            Recarregar
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ background: BG, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <style>{`
-        select option { background: #0d1929; color: ${TEXT}; }
+        select option { background: #0c1829; color: ${TEXT}; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        @media (max-width: 767px) {
+          .kpi-row { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+          .chart-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
-      <Script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js" strategy="afterInteractive" onLoad={() => setEr(true)} />
+      <Script
+        src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"
+        strategy="afterInteractive"
+        onLoad={() => setEr(true)}
+      />
 
-      <header style={{ borderBottom: `1px solid ${BORDER}`, padding: '18px 32px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <h1 style={{ fontFamily: dmSerif.style.fontFamily, fontSize: 'clamp(1.2rem, 3vw, 1.7rem)', color: TEXT, fontWeight: 400, margin: 0 }}>Painel de Dados — PCI</h1>
-          <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.1em', background: 'rgba(0,168,204,0.12)', color: ACCENT, border: `1px solid rgba(0,168,204,0.28)`, padding: '4px 10px', borderRadius: 4 }}>ADPF 635</span>
+      {/* Header */}
+      <header style={{ borderBottom: `1px solid ${BORDER}`, padding: '24px 32px 20px' }}>
+        <div style={{ maxWidth: 1400, margin: '0 auto', display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div>
+            <h1 style={{ fontFamily: dmSerif.style.fontFamily, fontSize: 'clamp(1.3rem, 3vw, 1.9rem)', color: TEXT, fontWeight: 400, margin: 0, marginBottom: 4 }}>
+              Painel de Monitoramento — PCI
+            </h1>
+            <p style={{ fontFamily: plusJakarta.style.fontFamily, fontSize: '0.82rem', color: MUTED, margin: 0 }}>
+              Programa Cidade Integrada · Governo do Estado do Rio de Janeiro
+            </p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.1em', background: `${ACCENT}18`, color: ACCENT, border: `1px solid ${ACCENT}38`, padding: '4px 10px', borderRadius: 4 }}>
+              ADPF 635 · STF
+            </span>
+            <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED }}>
+              Última atualização: 15 de maio de 2026
+            </span>
+          </div>
         </div>
-        <p style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED }}>Atualizado em {hoje}</p>
       </header>
 
-      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
-        <Sidebar territories={allTerritories} active={territoriosAtivos} onToggle={toggleTerritorio} busca={busca} onBusca={setBusca} />
+      <div style={{ maxWidth: 1400, margin: '0 auto', width: '100%', padding: '0 32px', boxSizing: 'border-box', flex: 1, display: 'flex', flexDirection: 'column' }}>
 
-        <main style={{ flex: 1, overflowY: 'auto', padding: '28px 32px', display: 'flex', flexDirection: 'column', gap: 24 }}>
-          <div style={{ display: 'flex', gap: 0, borderBottom: `1px solid ${BORDER}`, marginBottom: 4 }}>
-            {(['social','urbanismo'] as const).map(tab => (
-              <button key={tab} onClick={() => setAba(tab)} style={{ fontFamily: plusJakarta.style.fontFamily, fontWeight: aba===tab ? 600 : 400, fontSize: '0.9rem', padding: '11px 24px', background: 'none', border: 'none', cursor: 'pointer', color: aba===tab ? TEXT : MUTED, borderBottom: aba===tab ? `2px solid ${ACCENT}` : '2px solid transparent', marginBottom: -1, transition: 'all 0.15s' }}>
-                {tab === 'social' ? 'Social' : 'Urbanismo'}
-              </button>
-            ))}
-          </div>
+        {/* Territory filter buttons */}
+        <div style={{ padding: '20px 0 4px', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {TERR_BUTTONS.map(btn => {
+            const active = territorioSel === btn.value
+            const color = btn.value ? TERR_COLORS[btn.value] || ACCENT : ACCENT
+            return (
+              <button key={btn.label} onClick={() => setTerritorioSel(btn.value)} style={{
+                fontFamily: plusJakarta.style.fontFamily, fontWeight: active ? 600 : 400,
+                fontSize: '0.8rem', padding: '7px 16px', borderRadius: 20,
+                border: `1px solid ${active ? color : BORDER}`,
+                background: active ? `${color}1a` : 'transparent',
+                color: active ? color : MUTED,
+                cursor: 'pointer', transition: 'all 0.15s', whiteSpace: 'nowrap',
+              }}>{btn.label}</button>
+            )
+          })}
+        </div>
 
+        {/* Search */}
+        <div style={{ padding: '12px 0 0' }}>
+          <input
+            value={busca}
+            onChange={e => setBusca(e.target.value)}
+            placeholder="Buscar por ação, projeto, responsável..."
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem',
+              padding: '10px 16px', borderRadius: 8,
+              border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.03)',
+              color: TEXT, outline: 'none',
+            }}
+          />
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', borderBottom: `1px solid ${BORDER}`, marginTop: 20 }}>
+          {(['social', 'urbanismo'] as const).map(tab => (
+            <button key={tab} onClick={() => setAba(tab)} style={{
+              fontFamily: plusJakarta.style.fontFamily, fontWeight: aba === tab ? 600 : 400,
+              fontSize: '0.9rem', padding: '11px 24px',
+              background: aba === tab ? 'rgba(255,255,255,0.04)' : 'none',
+              border: 'none', cursor: 'pointer',
+              color: aba === tab ? TEXT : MUTED,
+              borderBottom: aba === tab ? `2px solid ${ACCENT}` : '2px solid transparent',
+              marginBottom: -1, transition: 'all 0.15s',
+            }}>
+              {tab === 'social' ? 'Social' : 'Urbanismo'}
+            </button>
+          ))}
+        </div>
+
+        {/* Content */}
+        <div style={{ padding: '28px 0 48px' }}>
           {aba === 'social'
-            ? <DashboardSocial data={socialData} loading={loadingSocial} er={er} territoriosAtivos={territoriosAtivos} busca={busca} />
-            : <DashboardUrbanismo data={urbanismoData} loading={loadingUrbanismo} er={er} territoriosAtivos={territoriosAtivos} busca={busca} />
+            ? <DashboardSocial data={socialData} er={er} territorioSel={territorioSel} busca={busca} />
+            : <DashboardUrbanismo data={urbanismoData} er={er} territorioSel={territorioSel} busca={busca} />
           }
-        </main>
+        </div>
       </div>
 
-      <footer style={{ borderTop: `1px solid rgba(255,255,255,0.05)`, padding: '10px 32px', display: 'flex', justifyContent: 'space-between' }}>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(85,119,170,0.45)' }}>Programa Cidade Integrada · Governo do Estado do Rio de Janeiro</span>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', color: 'rgba(85,119,170,0.35)' }}>Google Sheets · Tempo real</span>
+      <footer style={{ borderTop: `1px solid rgba(255,255,255,0.05)`, padding: '12px 32px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(85,119,170,0.45)' }}>
+          Programa Cidade Integrada · Governo do Estado do Rio de Janeiro
+        </span>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', color: 'rgba(85,119,170,0.35)' }}>
+          Google Sheets · Tempo real
+        </span>
       </footer>
     </div>
   )
