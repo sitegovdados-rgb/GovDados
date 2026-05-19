@@ -10,11 +10,11 @@ const dmMono = DM_Mono({ subsets: ['latin'], weight: ['400', '500'], display: 's
 const SOCIAL_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTmQ70z8qfPdYfDBNhP1rPKQOa8IDYvLn3cKOGHkJQAtzWxOrJDilM-3Mfx1Ufy74UI7u7THhWD5XK7/pub?output=csv'
 const URBANISMO_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRWfmHpAt-Wjh-IWiAYnyu6dLaj7-vlXDKZXLXP-UsyjR-2BSqFxSf0TMXGtgheYJn5reTMFgCoVO-0/pub?output=csv'
 
-const BG = '#040810'
-const SURFACE = 'rgba(255,255,255,0.025)'
-const BORDER = 'rgba(255,255,255,0.06)'
-const TEXT = '#e8edf5'
-const MUTED = '#5577aa'
+const BG = '#f5f7fc'
+const SURFACE = '#ffffff'
+const BORDER = '#e2e8f0'
+const TEXT = '#1a2a5e'
+const MUTED = '#64748b'
 const ACCENT = '#00c2a8'
 
 const TERR_COLORS: Record<string, string> = {
@@ -49,8 +49,8 @@ const STATUS_COLORS: Record<string, string> = {
 const PIE_COLORS = ['#0ea5e9','#2563a8','#f59e0b','#22c55e','#a78bfa','#ef4444','#06b6d4','#f97316','#818cf8','#94a3b8']
 
 const TT = {
-  backgroundColor: '#0c1829',
-  borderColor: 'rgba(255,255,255,0.10)',
+  backgroundColor: '#ffffff',
+  borderColor: '#e2e8f0',
   borderRadius: 8,
   textStyle: { color: TEXT, fontSize: 12, fontFamily: 'Plus Jakarta Sans, sans-serif' },
 }
@@ -135,13 +135,13 @@ function HBar({ data, colorFn, er, selected, onClickItem }: {
     grid: { left: 0, right: 40, top: 4, bottom: 4, containLabel: true },
     xAxis: {
       type: 'value',
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+      splitLine: { lineStyle: { color: '#e2e8f0' } },
       axisLabel: { color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
     },
     yAxis: {
       type: 'category',
       data: data.map(d => d.name),
-      axisLabel: { color: '#8fa3c8', fontSize: 11, fontFamily: plusJakarta.style.fontFamily, width: 160, overflow: 'truncate' },
+      axisLabel: { color: '#64748b', fontSize: 11, fontFamily: plusJakarta.style.fontFamily, width: 160, overflow: 'truncate' },
       axisTick: { show: false },
       axisLine: { show: false },
     },
@@ -150,7 +150,7 @@ function HBar({ data, colorFn, er, selected, onClickItem }: {
       cursor: onClickItem ? 'pointer' : 'default',
       data: data.map((d, i) => ({
         value: d.value,
-        itemStyle: { color: colorFn ? colorFn(d.name, i) : ACCENT, borderRadius: [0, 4, 4, 0], opacity: selected != null && selected !== d.name ? 0.25 : 1 },
+        itemStyle: { color: colorFn ? colorFn(d.name, i) : ACCENT, borderRadius: [0, 4, 4, 0], opacity: selected != null && selected !== d.name ? 0.35 : 1 },
       })),
       label: { show: true, position: 'right', color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
     }],
@@ -171,11 +171,11 @@ function VBar({ data, er, selected, onClickItem }: { data: { name: string; value
       data: data.map(d => d.name),
       axisLabel: { color: MUTED, fontSize: 10, rotate: -30, fontFamily: plusJakarta.style.fontFamily, interval: 0 },
       axisTick: { show: false },
-      axisLine: { lineStyle: { color: 'rgba(255,255,255,0.08)' } },
+      axisLine: { lineStyle: { color: '#e2e8f0' } },
     },
     yAxis: {
       type: 'value',
-      splitLine: { lineStyle: { color: 'rgba(255,255,255,0.05)' } },
+      splitLine: { lineStyle: { color: '#e2e8f0' } },
       axisLabel: { color: MUTED, fontSize: 11, fontFamily: dmMono.style.fontFamily },
     },
     series: [{
@@ -183,7 +183,7 @@ function VBar({ data, er, selected, onClickItem }: { data: { name: string; value
       cursor: onClickItem ? 'pointer' : 'default',
       data: data.map(d => ({
         value: d.value,
-        itemStyle: { color: d.color || '#2563a8', borderRadius: [4, 4, 0, 0], opacity: selected != null && selected !== d.name ? 0.25 : 1 },
+        itemStyle: { color: d.color || '#2563a8', borderRadius: [4, 4, 0, 0], opacity: selected != null && selected !== d.name ? 0.35 : 1 },
       })),
     }],
   }), [data, er, selected], onClickItem ? clickRef : undefined)
@@ -201,7 +201,7 @@ function Donut({ data, er, selected, onClickItem }: { data: { name: string; valu
       orient: 'vertical',
       right: 0,
       top: 'center',
-      textStyle: { color: '#8fa3c8', fontSize: 10, fontFamily: plusJakarta.style.fontFamily },
+      textStyle: { color: '#64748b', fontSize: 10, fontFamily: plusJakarta.style.fontFamily },
       icon: 'circle',
       itemWidth: 8,
       itemHeight: 8,
@@ -213,7 +213,7 @@ function Donut({ data, er, selected, onClickItem }: { data: { name: string; valu
       cursor: onClickItem ? 'pointer' : 'default',
       data: data.map((d, i) => ({
         ...d,
-        itemStyle: { color: PIE_COLORS[i % PIE_COLORS.length], borderRadius: 3, borderWidth: 2, borderColor: BG, opacity: selected != null && selected !== d.name ? 0.25 : 1 },
+        itemStyle: { color: PIE_COLORS[i % PIE_COLORS.length], borderRadius: 3, borderWidth: 2, borderColor: '#ffffff', opacity: selected != null && selected !== d.name ? 0.35 : 1 },
       })),
       label: { show: false },
     }],
@@ -268,16 +268,16 @@ function Pagination({ page, total, onPage }: { page: number; total: number; onPa
   return (
     <div style={{ padding: '12px 20px', borderTop: `1px solid ${BORDER}`, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end' }}>
       <button onClick={() => onPage(Math.max(1, page - 1))} disabled={page === 1}
-        style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: page === 1 ? 'not-allowed' : 'pointer', color: MUTED, opacity: page === 1 ? 0.4 : 1 }}>‹</button>
+        style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: '#f8fafc', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: page === 1 ? 'not-allowed' : 'pointer', color: MUTED, opacity: page === 1 ? 0.4 : 1 }}>‹</button>
       <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.7rem', color: MUTED }}>{page} / {total}</span>
       <button onClick={() => onPage(Math.min(total, page + 1))} disabled={page === total}
-        style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: page === total ? 'not-allowed' : 'pointer', color: MUTED, opacity: page === total ? 0.4 : 1 }}>›</button>
+        style={{ padding: '5px 11px', borderRadius: 6, border: `1px solid ${BORDER}`, background: '#f8fafc', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', cursor: page === total ? 'not-allowed' : 'pointer', color: MUTED, opacity: page === total ? 0.4 : 1 }}>›</button>
     </div>
   )
 }
 
 const FL: React.CSSProperties = { fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: MUTED, display: 'block', marginBottom: 4 }
-const FS: React.CSSProperties = { fontSize: '0.8rem', padding: '7px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.04)', color: TEXT, minWidth: 160, cursor: 'pointer' }
+const FS: React.CSSProperties = { fontSize: '0.8rem', padding: '7px 10px', borderRadius: 8, border: `1px solid ${BORDER}`, background: '#ffffff', color: TEXT, minWidth: 160, cursor: 'pointer' }
 
 function Th({ label, col, sortKey, sortDir, onSort }: {
   label: string; col: string; sortKey: string; sortDir: 'asc' | 'desc'
@@ -454,7 +454,7 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+              <tr style={{ background: '#f8fafc' }}>
                 <Th label="Ação" col="tarefa" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <Th label="Território" col="regiao" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <Th label="Área" col="area" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
@@ -468,7 +468,7 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
               {paginated.length === 0 ? (
                 <tr><td colSpan={7} style={{ padding: '32px 16px', textAlign: 'center', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem', color: MUTED }}>Nenhum resultado encontrado.</td></tr>
               ) : paginated.map((d, i) => (
-                <tr key={i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+                <tr key={i} style={{ borderBottom: `1px solid #f0f4f8` }}>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.82rem', color: TEXT, maxWidth: 240 }}>{d.tarefa}</td>
                   <td style={{ padding: '11px 16px' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -479,7 +479,7 @@ function DashboardSocial({ data, er, territorioSel, busca }: {
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.area || '—'}</td>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.responsavel}</td>
                   <td style={{ padding: '11px 16px' }}>
-                    <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#8fa3c8' }}>{d.tipo}</span>
+                    <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: '#f0f4f8', color: '#64748b' }}>{d.tipo}</span>
                   </td>
                   <td style={{ padding: '11px 16px' }}><StatusBadge status={d.status} /></td>
                   <td style={{ padding: '11px 16px', fontFamily: dmMono.style.fontFamily, fontSize: '0.78rem', color: TEXT, textAlign: 'right' }}>{d.total > 0 ? d.total.toLocaleString('pt-BR') : '—'}</td>
@@ -647,7 +647,7 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+              <tr style={{ background: '#f8fafc' }}>
                 <Th label="Projeto" col="projeto" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <Th label="Território" col="territorio" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <Th label="Área" col="area" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
@@ -662,7 +662,7 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
               {paginated.length === 0 ? (
                 <tr><td colSpan={8} style={{ padding: '32px 16px', textAlign: 'center', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem', color: MUTED }}>Nenhum resultado encontrado.</td></tr>
               ) : paginated.map((d, i) => (
-                <tr key={i} style={{ borderBottom: `1px solid rgba(255,255,255,0.04)` }}>
+                <tr key={i} style={{ borderBottom: `1px solid #f0f4f8` }}>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.82rem', color: TEXT, maxWidth: 240 }}>{d.projeto}</td>
                   <td style={{ padding: '11px 16px' }}>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -673,7 +673,7 @@ function DashboardUrbanismo({ data, er, territorioSel, busca }: {
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.area || '—'}</td>
                   <td style={{ padding: '11px 16px', fontFamily: plusJakarta.style.fontFamily, fontSize: '0.78rem', color: MUTED }}>{d.demandante}</td>
                   <td style={{ padding: '11px 16px' }}>
-                    <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: 'rgba(255,255,255,0.05)', color: '#8fa3c8' }}>{d.tipologia}</span>
+                    <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '3px 8px', borderRadius: 4, background: '#f0f4f8', color: '#64748b' }}>{d.tipologia}</span>
                   </td>
                   <td style={{ padding: '11px 16px' }}><StatusBadge status={d.status} /></td>
                   <td style={{ padding: '11px 16px', fontFamily: dmMono.style.fontFamily, fontSize: '0.75rem', color: MUTED }}>{d.inicio}</td>
@@ -764,10 +764,10 @@ export default function DashboardPage() {
   return (
     <div style={{ background: BG, minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <style>{`
-        select option { background: #0c1829; color: ${TEXT}; }
+        select option { background: white; color: #1a2a5e; }
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
         @media (max-width: 767px) {
           .kpi-row { display: grid !important; grid-template-columns: 1fr 1fr !important; }
           .chart-grid { grid-template-columns: 1fr !important; }
@@ -832,7 +832,7 @@ export default function DashboardPage() {
               width: '100%', boxSizing: 'border-box',
               fontFamily: plusJakarta.style.fontFamily, fontSize: '0.85rem',
               padding: '10px 16px', borderRadius: 8,
-              border: `1px solid ${BORDER}`, background: 'rgba(255,255,255,0.03)',
+              border: `1px solid ${BORDER}`, background: '#ffffff',
               color: TEXT, outline: 'none',
             }}
           />
@@ -844,7 +844,7 @@ export default function DashboardPage() {
             <button key={tab} onClick={() => setAba(tab)} style={{
               fontFamily: plusJakarta.style.fontFamily, fontWeight: aba === tab ? 600 : 400,
               fontSize: '0.9rem', padding: '11px 24px',
-              background: aba === tab ? 'rgba(255,255,255,0.04)' : 'none',
+              background: aba === tab ? 'rgba(0,0,0,0.04)' : 'none',
               border: 'none', cursor: 'pointer',
               color: aba === tab ? TEXT : MUTED,
               borderBottom: aba === tab ? `2px solid ${ACCENT}` : '2px solid transparent',
@@ -864,11 +864,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <footer style={{ borderTop: `1px solid rgba(255,255,255,0.05)`, padding: '12px 32px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(85,119,170,0.45)' }}>
+      <footer style={{ borderTop: `1px solid ${BORDER}`, padding: '12px 32px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(100,116,139,0.6)' }}>
           Programa Cidade Integrada · Governo do Estado do Rio de Janeiro
         </span>
-        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', color: 'rgba(85,119,170,0.35)' }}>
+        <span style={{ fontFamily: dmMono.style.fontFamily, fontSize: '0.55rem', color: 'rgba(100,116,139,0.5)' }}>
           Google Sheets · Tempo real
         </span>
       </footer>
