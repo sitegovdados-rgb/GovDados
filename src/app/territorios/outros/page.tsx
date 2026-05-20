@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import DashboardTabs from '@/components/DashboardTabs'
+import { DASHBOARDS } from '@/config/dashboards'
 
 export default function OutrosPage() {
   return (
@@ -23,7 +24,7 @@ export default function OutrosPage() {
         </div>
       </section>
 
-      <DashboardTabs abas={['urbanismo']} />
+      <DashboardTabs abas={['urbanismo']} urls={DASHBOARDS.outros} />
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import DashboardTabs from '@/components/DashboardTabs'
+import { DASHBOARDS } from '@/config/dashboards'
 
 export default function PPGPage() {
   return (
@@ -24,7 +25,7 @@ export default function PPGPage() {
         </div>
       </section>
 
-      <DashboardTabs />
+      <DashboardTabs urls={DASHBOARDS.ppg} />
     </div>
   )
 }

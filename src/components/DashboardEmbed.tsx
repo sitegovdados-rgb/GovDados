@@ -21,9 +21,10 @@ const CONFIGS: Record<Tipo, { src: string; paddingBottom: string; iframeHeight: 
   },
 }
 
-export default function DashboardEmbed({ tipo }: { tipo: Tipo }) {
+export default function DashboardEmbed({ tipo, src }: { tipo: Tipo; src?: string }) {
   const cfg = CONFIGS[tipo]
   const cls = `db-embed-${tipo}`
+  const finalSrc = src ?? cfg.src
 
   return (
     <>
@@ -60,7 +61,7 @@ export default function DashboardEmbed({ tipo }: { tipo: Tipo }) {
       `}</style>
       <div className={cls}>
         <iframe
-          src={cfg.src}
+          src={finalSrc}
           scrolling="no"
           sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
           title={tipo === 'social' ? 'Dashboard Programas Sociais' : 'Dashboard Urbanismo'}

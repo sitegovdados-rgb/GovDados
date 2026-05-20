@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import DashboardTabs from '@/components/DashboardTabs'
+import { DASHBOARDS } from '@/config/dashboards'
 
 export default function ManguinhosJacarezinhoPage() {
   return (
@@ -24,7 +25,7 @@ export default function ManguinhosJacarezinhoPage() {
         </div>
       </section>
 
-      <DashboardTabs />
+      <DashboardTabs urls={DASHBOARDS.manguinhos} />
     </div>
   )
 }

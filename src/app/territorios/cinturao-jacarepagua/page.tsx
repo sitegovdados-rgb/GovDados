@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import DashboardTabs from '@/components/DashboardTabs'
+import { DASHBOARDS } from '@/config/dashboards'
 
 export default function CinturaoPage() {
   return (
@@ -25,7 +26,7 @@ export default function CinturaoPage() {
         </div>
       </section>
 
-      <DashboardTabs />
+      <DashboardTabs urls={DASHBOARDS.cinturao} />
     </div>
   )
 }

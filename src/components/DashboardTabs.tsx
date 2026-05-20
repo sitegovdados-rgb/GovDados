@@ -2,11 +2,13 @@
 
 import { useState } from 'react'
 import DashboardEmbed from './DashboardEmbed'
+import type { DashboardUrls } from '@/config/dashboards'
 
 type Aba = 'social' | 'urbanismo'
 
 interface Props {
   abas?: Aba[]
+  urls?: DashboardUrls
 }
 
 const allTabs = [
@@ -24,7 +26,7 @@ const allTabs = [
   },
 ]
 
-export default function DashboardTabs({ abas }: Props) {
+export default function DashboardTabs({ abas, urls }: Props) {
   const tabs = abas ? allTabs.filter(t => abas.includes(t.id)) : allTabs
   const [activeTab, setActiveTab] = useState<Aba>(tabs[0].id)
 
@@ -110,8 +112,8 @@ export default function DashboardTabs({ abas }: Props) {
         </div>
 
         <div className="dashboard-tab-content">
-          {activeTab === 'social' && <DashboardEmbed tipo="social" />}
-          {activeTab === 'urbanismo' && <DashboardEmbed tipo="urbanismo" />}
+          {activeTab === 'social' && <DashboardEmbed tipo="social" src={urls?.social} />}
+          {activeTab === 'urbanismo' && <DashboardEmbed tipo="urbanismo" src={urls?.urbanismo} />}
         </div>
       </div>
     </section>

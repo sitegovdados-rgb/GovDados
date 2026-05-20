@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import DashboardTabs from '@/components/DashboardTabs'
+import { DASHBOARDS } from '@/config/dashboards'
 
 export default function HomePage() {
   const territoriosList = [
@@ -92,7 +93,7 @@ export default function HomePage() {
       </section>
 
       {/* ── DASHBOARDS COM ABAS ───────────────────────────────────────── */}
-      <DashboardTabs />
+      <DashboardTabs urls={DASHBOARDS.home} />
 
       {/* ── CTA ──────────────────────────────────────── */}
       <section style={{ background: 'linear-gradient(135deg, var(--pci-navy) 0%, #1e3a8a 100%)', color: 'white', borderTop: '3px solid var(--pci-cyan)' }}>
