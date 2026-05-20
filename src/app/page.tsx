@@ -76,7 +76,7 @@ export default function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-4">
               {[
                 { n: '3', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
-                { n: '116', label: 'Serviços', sub: 'registrados nos territórios' },
+                { n: '115', label: 'Serviços', sub: 'registrados nos territórios' },
                 { n: '224mil+', label: 'Atendimentos', sub: 'em serviços pelo PCI' },
                 { n: '231', label: 'Intervenções', sub: 'urbanísticas registradas' },
               ].map((item, i) => (
