@@ -10,6 +10,7 @@ const links = [
   { href: '/urbanismo',       label: 'Urbanismo' },
   { href: '/repositorio',     label: 'Repositório' },
   { href: '/dados',           label: 'Dados Abertos' },
+  { href: '/quem-somos',     label: 'Quem somos' },
 ]
 
 export default function Navbar() {
