@@ -1,15 +1,7 @@
 import Link from 'next/link'
-import { getIndicadores } from '@/lib/directus'
 import DashboardTabs from '@/components/DashboardTabs'
 
-export const revalidate = 3600
-
-export default async function HomePage() {
-  let indicadores: any[] = []
-  try {
-    indicadores = await getIndicadores()
-  } catch (e) { console.error(e) }
-
+export default function HomePage() {
   const territoriosList = [
     { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', descricao: 'Território da Zona Sudoeste do Rio de Janeiro, na Baixada de Jacarepaguá, com intensa expansão urbana e elevada densidade demográfica.' },
     { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana, Ipanema e Lagoa.' },
@@ -83,10 +75,10 @@ export default async function HomePage() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="grid grid-cols-2 md:grid-cols-4">
               {[
-                { n: indicadores.length || '18', label: 'Indicadores', sub: 'sociográficos mapeados' },
-                { n: '4', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
+                { n: '3', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
+                { n: '116', label: 'Serviços', sub: 'registrados nos territórios' },
+                { n: '224mil+', label: 'Atendimentos', sub: 'em serviços pelo PCI' },
                 { n: '231', label: 'Intervenções', sub: 'urbanísticas registradas' },
-                { n: '44mil+', label: 'Beneficiários', sub: 'atendidos pelo PCI' },
               ].map((item, i) => (
                 <div key={i} style={{ padding: '18px 24px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
                   <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.8rem', color: 'var(--pci-cyan)', lineHeight: 1, marginBottom: 4 }}>{item.n}</p>
