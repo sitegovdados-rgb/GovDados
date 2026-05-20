@@ -3,23 +3,30 @@
 import { useState } from 'react'
 import DashboardEmbed from './DashboardEmbed'
 
-export default function DashboardTabs() {
-  const [activeTab, setActiveTab] = useState<'social' | 'urbanismo'>('social')
+type Aba = 'social' | 'urbanismo'
 
-  const tabs = [
-    {
-      id: 'social',
-      label: 'Programas Sociais',
-      icon: '👥',
-      description: 'Ações e serviços sociais do Programa Cidade Integrada nos territórios do Rio de Janeiro.',
-    },
-    {
-      id: 'urbanismo' as const,
-      label: 'Urbanismo',
-      icon: '🏗️',
-      description: 'Projetos arquitetônicos e intervenções urbanísticas do Programa Cidade Integrada.',
-    },
-  ]
+interface Props {
+  abas?: Aba[]
+}
+
+const allTabs = [
+  {
+    id: 'social' as Aba,
+    label: 'Programas Sociais',
+    icon: '👥',
+    description: 'Ações e serviços sociais do Programa Cidade Integrada nos territórios do Rio de Janeiro.',
+  },
+  {
+    id: 'urbanismo' as Aba,
+    label: 'Urbanismo',
+    icon: '🏗️',
+    description: 'Projetos arquitetônicos e intervenções urbanísticas do Programa Cidade Integrada.',
+  },
+]
+
+export default function DashboardTabs({ abas }: Props) {
+  const tabs = abas ? allTabs.filter(t => abas.includes(t.id)) : allTabs
+  const [activeTab, setActiveTab] = useState<Aba>(tabs[0].id)
 
   return (
     <section style={{ background: 'var(--pci-light)', borderTop: '1px solid var(--pci-border)', borderBottom: '1px solid var(--pci-border)' }}>

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import DashboardEmbed from '@/components/DashboardEmbed'
+import DashboardTabs from '@/components/DashboardTabs'
 
 export default function PPGPage() {
   return (
@@ -24,21 +24,7 @@ export default function PPGPage() {
         </div>
       </section>
 
-      <div style={{ paddingTop: 48, paddingBottom: 16 }}>
-        <div className="max-w-7xl mx-auto px-6" style={{ marginBottom: 24 }}>
-          <div className="pci-accent-line" />
-          <h2 className="pci-title" style={{ fontSize: '1.6rem' }}>Programas Sociais</h2>
-        </div>
-        <DashboardEmbed tipo="social" />
-      </div>
-
-      <div style={{ paddingTop: 32, paddingBottom: 64 }}>
-        <div className="max-w-7xl mx-auto px-6" style={{ marginBottom: 24 }}>
-          <div className="pci-accent-line" />
-          <h2 className="pci-title" style={{ fontSize: '1.6rem' }}>Urbanismo</h2>
-        </div>
-        <DashboardEmbed tipo="urbanismo" />
-      </div>
+      <DashboardTabs />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import DashboardEmbed from '@/components/DashboardEmbed'
+import DashboardTabs from '@/components/DashboardTabs'
 
 export default function OutrosPage() {
   return (
@@ -23,13 +23,7 @@ export default function OutrosPage() {
         </div>
       </section>
 
-      <div style={{ paddingTop: 48, paddingBottom: 64 }}>
-        <div className="max-w-7xl mx-auto px-6" style={{ marginBottom: 24 }}>
-          <div className="pci-accent-line" />
-          <h2 className="pci-title" style={{ fontSize: '1.6rem' }}>Urbanismo</h2>
-        </div>
-        <DashboardEmbed tipo="urbanismo" />
-      </div>
+      <DashboardTabs abas={['urbanismo']} />
     </div>
   )
 }
