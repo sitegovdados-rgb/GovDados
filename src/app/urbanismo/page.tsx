@@ -1,40 +1,19 @@
-import { getProgramasUrbanismo } from '@/lib/directus'
-import UrbanismoFiltrado from '@/components/ui/UrbanismoFiltrado'
+import Link from 'next/link'
 
-export const revalidate = 3600
-
-export default async function UrbanismoPage() {
-  let urbanismo: any[] = []
-  try { urbanismo = await getProgramasUrbanismo() } catch (e) { console.error(e) }
-
-  const concluidos  = urbanismo.filter((u: any) => u.status === 'Concluído').length
-  const emExecucao  = urbanismo.filter((u: any) => u.status === 'Em execução').length
-
+export default function UrbanismoPage() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12">
-      <div className="mb-10">
-        <div className="pci-accent-line" />
-        <span className="pci-tag mb-3">Eixo Infraestrutura · PCI</span>
-        <h1 className="pci-title" style={{ fontSize: '2.5rem', marginTop: 12, marginBottom: 8 }}>Intervenções Urbanísticas</h1>
-        <p style={{ fontFamily: 'Plus Jakarta Sans', color: 'var(--pci-dim)', maxWidth: 600, lineHeight: 1.7 }}>
-          Projetos arquitetônicos e urbanísticos do Programa Cidade Integrada — obras executadas e planejadas.
+    <div className="max-w-7xl mx-auto px-6 py-20">
+      <div style={{ maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--pci-light)', border: '1px solid var(--pci-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', fontSize: '1.8rem' }}>
+          🔧
+        </div>
+        <span className="pci-tag mb-4">Em Desenvolvimento</span>
+        <h1 className="pci-title" style={{ fontSize: '2rem', marginTop: 16, marginBottom: 12 }}>Urbanismo</h1>
+        <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.7, marginBottom: 32 }}>
+          A seção de Urbanismo está em desenvolvimento. Em breve disponibilizaremos informações completas sobre os projetos arquitetônicos e intervenções urbanísticas do Programa Cidade Integrada.
         </p>
+        <Link href="/" className="pci-btn-outline">Voltar ao início</Link>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-        {[
-          { valor: urbanismo.length, label: 'Total de projetos',  cor: 'var(--pci-navy)' },
-          { valor: concluidos,       label: 'Concluídos',         cor: 'var(--pci-green)' },
-          { valor: emExecucao,       label: 'Em execução',        cor: 'var(--pci-cyan)' },
-        ].map((s, i) => (
-          <div key={i} className="pci-card p-6 text-center">
-            <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '2rem', color: s.cor }}>{s.valor}</p>
-            <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.85rem', color: 'var(--pci-text)' }}>{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      <UrbanismoFiltrado urbanismo={urbanismo} />
     </div>
   )
 }

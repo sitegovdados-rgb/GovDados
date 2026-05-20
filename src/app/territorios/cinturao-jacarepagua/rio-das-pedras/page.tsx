@@ -49,10 +49,7 @@ export default async function RiodasPedrasPage() {
             <span style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'var(--pci-cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Rio das Pedras</span>
           </div>
-          <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 12, lineHeight: 1.6, maxWidth: 500 }}>
-            Área do Plano de Retomada de Territórios no Âmbito da A.D.P.F. 635 do STF
-          </p>
-          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, marginBottom: 10 }}>
+          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, marginBottom: 10, marginTop: 12 }}>
             Rio das Pedras
           </h1>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'rgba(255,255,255,0.65)', maxWidth: 580, lineHeight: 1.7, marginBottom: 16 }}>
@@ -95,7 +92,7 @@ export default async function RiodasPedrasPage() {
           <h2 className="pci-title" style={{ fontSize: '1.6rem', marginBottom: 16 }}>Histórico</h2>
           <div className="pci-card p-6">
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.92rem', color: 'var(--pci-dim)', lineHeight: 1.85 }}>
-              Rio das Pedras desenvolveu-se a partir dos <strong>anos 1970</strong> com a chegada intensa de migrantes nordestinos que ocuparam a área de forma espontânea, em terrenos da Zona Oeste ainda pouco urbanizados. Sua expansão acelerada ao longo das décadas seguintes resultou em uma das maiores favelas do Brasil em extensão territorial e número de moradores.
+              Rio das Pedras desenvolveu-se a partir dos <strong>anos 1970</strong> com a chegada intensa de migrantes nordestinos que ocuparam a área de forma espontânea, em terrenos da Zona Sudoeste ainda pouco urbanizados. Sua expansão acelerada ao longo das décadas seguintes resultou em uma das maiores favelas do Brasil em extensão territorial e número de moradores.
             </p>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.92rem', color: 'var(--pci-dim)', lineHeight: 1.85, marginTop: 12 }}>
               Nos anos 1990, Rio das Pedras tornou-se conhecida pela formação de uma das primeiras <strong>milícias</strong> do Rio de Janeiro — grupos armados compostos originalmente por policiais e ex-policiais que passaram a cobrar taxas de moradores e comerciantes em troca de "proteção", expulsando traficantes e assumindo o controle territorial. Esse fenômeno, que começou em Rio das Pedras, espalhou-se por toda a Zona Oeste e tornou-se objeto de diversas CPIs e investigações do poder público.

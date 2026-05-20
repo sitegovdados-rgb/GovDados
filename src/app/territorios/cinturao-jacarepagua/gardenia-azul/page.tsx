@@ -58,10 +58,7 @@ export default async function GardeniaAzulPage() {
             <span style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
             <span style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'var(--pci-cyan)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Gardênia Azul</span>
           </div>
-          <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 12, lineHeight: 1.6, maxWidth: 500 }}>
-            Área do Plano de Retomada de Territórios no Âmbito da A.D.P.F. 635 do STF
-          </p>
-          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, marginBottom: 10 }}>
+          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, marginBottom: 10, marginTop: 12 }}>
             Gardênia Azul
           </h1>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'rgba(255,255,255,0.65)', maxWidth: 580, lineHeight: 1.7, marginBottom: 16 }}>
@@ -87,7 +84,7 @@ export default async function GardeniaAzulPage() {
               A origem da Gardênia Azul remonta ao período colonial, quando a área integrava grandes propriedades rurais com engenhos. O <strong>Engenho D'Água</strong>, do século XVII, foi parte da fazenda transferida ao Barão da Taquara em 1847. A transformação urbana mais significativa ocorreu a partir dos anos 1950, quando José Padilha Coimbra promoveu o loteamento das terras, nomeando-o com referências botânicas — daí o nome "Gardênia Azul".
             </p>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.92rem', color: 'var(--pci-dim)', lineHeight: 1.85, marginTop: 12 }}>
-              Na década de 1990, o bairro passou por intenso crescimento populacional impulsionado pela expansão da Zona Oeste e pela chegada de populações de baixa renda, resultando na formação de sublocalidades com padrões distintos de ocupação. A proximidade de algumas favelas com os rios do Anil e do Arroio Fundo representa um dos principais riscos ambientais do território.
+              Na década de 1990, o bairro passou por intenso crescimento populacional impulsionado pela expansão da Zona Sudoeste e pela chegada de populações de baixa renda, resultando na formação de sublocalidades com padrões distintos de ocupação. A proximidade de algumas favelas com os rios do Anil e do Arroio Fundo representa um dos principais riscos ambientais do território.
             </p>
           </div>
         </section>

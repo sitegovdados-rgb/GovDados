@@ -76,10 +76,7 @@ export default async function PPGPage() {
               Pavão-Pavãozinho e Cantagalo
             </span>
           </div>
-          <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.45)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 12, lineHeight: 1.6, maxWidth: 500 }}>
-            Área do Plano de Retomada de Territórios no Âmbito da A.D.P.F. 635 do STF
-          </p>
-          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, marginBottom: 12 }}>
+          <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, marginBottom: 12, marginTop: 12 }}>
             Pavão-Pavãozinho<br />e Cantagalo
           </h1>
           <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '1rem', color: 'rgba(255,255,255,0.65)', maxWidth: 600, lineHeight: 1.7, marginBottom: 20 }}>
@@ -88,7 +85,6 @@ export default async function PPGPage() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             <span className="pci-tag-navy">Zona Sul</span>
             <span className="pci-tag-navy">Copacabana · Ipanema</span>
-            <span className="pci-tag-navy">ADPF 635 · STF</span>
           </div>
         </div>
 

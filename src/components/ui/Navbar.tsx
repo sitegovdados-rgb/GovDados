@@ -8,8 +8,6 @@ const links = [
   { href: '/territorios',     label: 'Territórios' },
   { href: '/programas',       label: 'Programas Sociais' },
   { href: '/urbanismo',       label: 'Urbanismo' },
-  { href: '/painel',          label: 'Painel de Dados' },
-  { href: '/dashboard',       label: 'Dashboard' },
   { href: '/repositorio',     label: 'Repositório' },
   { href: '/dados',           label: 'Dados Abertos' },
 ]

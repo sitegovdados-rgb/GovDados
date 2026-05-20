@@ -21,7 +21,7 @@ export default async function HomePage() {
   const totalBeneficiarios = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
 
   const territoriosList = [
-    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Conjunto de comunidades na Zona Oeste, composto por Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.' },
+    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Conjunto de comunidades na Zona Sudoeste, composto por Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.' },
     { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'ativo', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana e Ipanema.' },
     { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', status: 'ativo', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
     { nome: 'Outros — Atuações do PCI', slug: 'outros', status: 'ativo', descricao: 'Programas e intervenções do PCI fora dos territórios principais — atuações em diversas regiões do Rio de Janeiro.' },
@@ -41,9 +41,6 @@ export default async function HomePage() {
           <div className="max-w-2xl mb-10">
             <div style={{ marginBottom: 16 }}>
               <span className="pci-tag-navy">Governo do Estado do Rio de Janeiro</span>
-              <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.6rem', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 8, lineHeight: 1.6 }}>
-                Área do Plano de Retomada de Territórios no Âmbito da A.D.P.F. 635 do STF
-              </p>
             </div>
             <h1 style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: 'clamp(2rem, 5vw, 3.5rem)', lineHeight: 1.1, marginBottom: 16, marginTop: 12 }}>
               Painel do Programa<br />
@@ -125,7 +122,7 @@ export default async function HomePage() {
               O <strong>Programa Cidade Integrada</strong> é uma iniciativa do Governo do Estado do Rio de Janeiro que visa a integração entre bairros formais e informais através de investimentos em infraestrutura, melhorias de espaços públicos e garantia de acessibilidade.
             </p>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 24 }}>
-              O programa atua em territórios historicamente conflagrados no âmbito da <strong>ADPF 635 do STF</strong>, promovendo o novo ordenamento socioterritorial.
+              O programa atua em territórios historicamente conflagrados do Rio de Janeiro, promovendo o novo ordenamento socioterritorial.
             </p>
             <Link href="/territorios" className="pci-btn">Ver Territórios</Link>
           </div>
@@ -231,7 +228,7 @@ export default async function HomePage() {
               </p>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-              <Link href="/painel" className="pci-btn-white">Painel de Dados</Link>
+              <Link href="/territorios" className="pci-btn-white">Explorar Territórios</Link>
               <Link href="/dados" style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.875rem', padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.1)', color: 'white', border: '2px solid rgba(255,255,255,0.25)', display: 'inline-block' }}>
                 Dados Abertos
               </Link>

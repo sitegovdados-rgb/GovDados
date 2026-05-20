@@ -28,7 +28,7 @@ export default async function TerritoriosPage() {
   } catch (e) { console.error(e) }
 
   const fallback = [
-    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', nivel: 1, status: 'ativo', descricao: 'Conjunto de comunidades na Zona Oeste do Rio de Janeiro.' },
+    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', nivel: 1, status: 'ativo', descricao: 'Conjunto de comunidades na Zona Sudoeste do Rio de Janeiro.' },
     { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', nivel: 1, status: 'ativo', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana e Ipanema.' },
     { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', nivel: 1, status: 'ativo', descricao: 'Territórios da Zona Norte do Rio de Janeiro.' },
     { nome: 'Outros', slug: 'outros', nivel: 1, status: 'ativo', descricao: 'Atuações pontuais do PCI fora dos territórios principais.' },

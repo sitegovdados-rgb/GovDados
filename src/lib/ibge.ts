@@ -106,7 +106,7 @@ export const DADOS_FAVELAS: Record<string, {
     ranking_domicilios_brasil: 2,
     moradores: 64988,
     domicilios: 23846,
-    contexto: 'Zona Oeste do Rio de Janeiro, em Jacarepaguá. Um dos maiores aglomerados da região.',
+    contexto: 'Zona Sudoeste do Rio de Janeiro, em Jacarepaguá. Um dos maiores aglomerados da região.',
     destaque: '2ª maior favela do Brasil em número de domicílios (Censo 2022)',
   },
   'Manguinhos': {
@@ -118,7 +118,7 @@ export const DADOS_FAVELAS: Record<string, {
   'Corredor Itanhangá': {
     moradores: 29165,
     domicilios: 13347,
-    contexto: 'Zona Oeste do Rio de Janeiro, em Jacarepaguá.',
+    contexto: 'Zona Sudoeste do Rio de Janeiro, em Jacarepaguá.',
     destaque: 'Território com alta densidade — 41.685 hab/km²',
   },
   'Pavão-Pavãozinho e Cantagalo': {
