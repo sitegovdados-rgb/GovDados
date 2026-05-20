@@ -11,7 +11,7 @@ export default async function HomePage() {
   } catch (e) { console.error(e) }
 
   const territoriosList = [
-    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', descricao: 'Território da Zona Sudoeste do Rio de Janeiro, na Baixada de Jacarepaguá, com intensa expansão urbana e elevad[...]
+    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', descricao: 'Território da Zona Sudoeste do Rio de Janeiro, na Baixada de Jacarepaguá, com intensa expansão urbana e elevada he[...]
     { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana, Ipanema e Lagoa.' },
     { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
     { nome: 'Outros — Atuações do PCI', slug: 'outros', descricao: 'Projetos e intervenções do PCI fora dos territórios principais, em diversas regiões do Rio de Janeiro.' },
@@ -106,7 +106,7 @@ export default async function HomePage() {
             <div className="pci-accent-line" />
             <h2 className="pci-title" style={{ fontSize: '2rem', marginBottom: 16 }}>O que é o Programa Cidade Integrada</h2>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 16 }}>
-              O <strong>Programa Cidade Integrada</strong> é uma iniciativa do Governo do Estado do Rio de Janeiro que visa a integração entre bairros formais e informais através de investime[...]
+              O <strong>Programa Cidade Integrada</strong> é uma iniciativa do Governo do Estado do Rio de Janeiro que visa a integração entre bairros formais e informais através de investimentos [...]
             </p>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 24 }}>
               O programa atua em territórios historicamente conflagrados do Rio de Janeiro, promovendo o novo ordenamento socioterritorial.
@@ -150,7 +150,7 @@ export default async function HomePage() {
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
               <Link href="/territorios" className="pci-btn-white">Explorar Territórios</Link>
-              <Link href="/dados" style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.875rem', padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.1)', colo[...]
+              <Link href="/dados" style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.875rem', padding: '12px 24px', borderRadius: 8, background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.8)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center' }}>
                 Dados Abertos
               </Link>
             </div>
