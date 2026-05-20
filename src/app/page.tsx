@@ -1,30 +1,20 @@
 import Link from 'next/link'
-import { getTerritorios, getSubTerritorios, getProgramasTerritorio, getIndicadores, getProgramasUrbanismo } from '@/lib/directus'
+import { getIndicadores } from '@/lib/directus'
+import DashboardEmbed from '@/components/DashboardEmbed'
 
 export const revalidate = 3600
 
 export default async function HomePage() {
-  let territorios: any[] = []
-  let subTerritorios: any[] = []
-  let programas: any[] = []
   let indicadores: any[] = []
-  let urbanismo: any[] = []
-
   try {
-    territorios    = await getTerritorios()
-    subTerritorios = await getSubTerritorios('cinturao-jacarepagua')
-    programas      = await getProgramasTerritorio()
-    indicadores    = await getIndicadores()
-    urbanismo      = await getProgramasUrbanismo()
+    indicadores = await getIndicadores()
   } catch (e) { console.error(e) }
 
-  const totalBeneficiarios = programas.reduce((acc: number, p: any) => acc + (p.beneficiarios || 0), 0)
-
   const territoriosList = [
-    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', status: 'ativo', descricao: 'Conjunto de comunidades na Zona Sudoeste, composto por Gardênia Azul, Rio das Pedras e Corredor do Itanhangá.' },
-    { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', status: 'ativo', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana e Ipanema.' },
-    { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', status: 'ativo', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
-    { nome: 'Outros — Atuações do PCI', slug: 'outros', status: 'ativo', descricao: 'Programas e intervenções do PCI fora dos territórios principais — atuações em diversas regiões do Rio de Janeiro.' },
+    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', descricao: 'Território da Zona Sudoeste do Rio de Janeiro, na Baixada de Jacarepaguá, com intensa expansão urbana e elevada heterogeneidade socioespacial.' },
+    { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana, Ipanema e Lagoa.' },
+    { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
+    { nome: 'Outros — Atuações do PCI', slug: 'outros', descricao: 'Projetos e intervenções do PCI fora dos territórios principais, em diversas regiões do Rio de Janeiro.' },
   ]
 
   return (
@@ -36,8 +26,6 @@ export default async function HomePage() {
         <div style={{ position: 'absolute', bottom: 0, right: 100, width: 240, height: 240, borderRadius: '50%', background: 'rgba(0,168,204,0.05)', pointerEvents: 'none' }} />
 
         <div className="max-w-7xl mx-auto px-6 pt-16 pb-10">
-
-          {/* Título */}
           <div className="max-w-2xl mb-10">
             <div style={{ marginBottom: 16 }}>
               <span className="pci-tag-navy">Governo do Estado do Rio de Janeiro</span>
@@ -51,15 +39,14 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Cards de territórios dentro do hero */}
+          {/* Cards de territórios */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
-            {territoriosList.map((t: any) => (
+            {territoriosList.map((t) => (
               <div key={t.slug} className="hero-card" style={{
                 background: 'rgba(255,255,255,0.10)',
                 border: '1px solid rgba(255,255,255,0.20)',
                 borderRadius: 12,
                 padding: '20px 22px',
-                opacity: t.status === 'em_breve' ? 0.7 : 1,
                 transition: 'background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s',
               }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -97,9 +84,9 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-4">
               {[
                 { n: indicadores.length || '18', label: 'Indicadores', sub: 'sociográficos mapeados' },
-                { n: programas.length || '16', label: 'Programas', sub: 'sociais em andamento' },
-                { n: subTerritorios.length || '3', label: 'Territórios', sub: 'no Cinturão de Jacarepaguá' },
-                { n: totalBeneficiarios > 0 ? (totalBeneficiarios / 1000).toFixed(0) + 'mil+' : '44mil+', label: 'Beneficiários', sub: 'atendidos pelo PCI' },
+                { n: '4', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
+                { n: '231', label: 'Intervenções', sub: 'urbanísticas registradas' },
+                { n: '44mil+', label: 'Beneficiários', sub: 'atendidos pelo PCI' },
               ].map((item, i) => (
                 <div key={i} style={{ padding: '18px 24px', borderRight: i < 3 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
                   <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.8rem', color: 'var(--pci-cyan)', lineHeight: 1, marginBottom: 4 }}>{item.n}</p>
@@ -145,72 +132,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── URBANISMO ────────────────────────────────── */}
+      {/* ── DASHBOARDS ───────────────────────────────── */}
       <section style={{ background: 'var(--pci-light)', borderTop: '1px solid var(--pci-border)', borderBottom: '1px solid var(--pci-border)' }}>
-        <div className="max-w-7xl mx-auto px-6 py-14">
-          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-            <div>
-              <div className="pci-accent-line" />
-              <h2 className="pci-title" style={{ fontSize: '2rem' }}>Urbanismo</h2>
-              <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)', marginTop: 4 }}>
-                {urbanismo.filter((u: any) => u.status === 'Executado').length} obras executadas · {urbanismo.filter((u: any) => u.status === 'Planejado').length} planejadas
-              </p>
-            </div>
-            <Link href="/urbanismo" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>
-              Ver todas →
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {urbanismo.slice(0, 6).map((u: any) => (
-              <div key={u.id} className="pci-card p-5" style={{ borderLeft: `4px solid ${u.status === 'Executado' ? 'var(--pci-green)' : 'var(--pci-cyan)'}` }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, gap: 8 }}>
-                  <span className="pci-tag">{u.tipo}</span>
-                  <span className={`badge ${u.status === 'Executado' ? 'badge-green' : 'badge-amber'}`}>{u.status}</span>
-                </div>
-                <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.88rem', color: 'var(--pci-text)', marginBottom: 4 }}>{u.titulo}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── PROGRAMAS SOCIAIS ────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 py-14">
-        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div>
+        <div style={{ paddingTop: 56, paddingBottom: 24 }}>
+          <div className="max-w-7xl mx-auto px-6" style={{ marginBottom: 32 }}>
             <div className="pci-accent-line" />
-            <h2 className="pci-title" style={{ fontSize: '2rem' }}>Programas Sociais</h2>
-            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)', marginTop: 4 }}>
-              Cinturão de Jacarepaguá · {programas.length} programas cadastrados
+            <h2 className="pci-title" style={{ fontSize: '2rem', marginBottom: 8 }}>Programas Sociais</h2>
+            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)' }}>
+              Ações e serviços sociais do Programa Cidade Integrada nos territórios do Rio de Janeiro.
             </p>
           </div>
-          <Link href="/programas" style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.85rem', color: 'var(--pci-blue)', fontWeight: 600 }}>
-            Ver todos →
-          </Link>
+          <DashboardEmbed tipo="social" />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {programas.slice(0, 6).map((p: any) => (
-            <div key={p.id} className="pci-card p-5">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10, gap: 8 }}>
-                <span className="pci-tag">{p.programa?.tipo}</span>
-                <span className={`badge ${p.status === 'Em execução' ? 'badge-green' : p.status === 'Concluída' ? 'badge-blue' : 'badge-gray'}`}>
-                  {p.status}
-                </span>
-              </div>
-              <h3 style={{ fontFamily: 'Sora', fontWeight: 600, fontSize: '0.9rem', color: 'var(--pci-text)', marginBottom: 6, lineHeight: 1.4 }}>{p.programa?.titulo}</h3>
-              <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'var(--pci-dim)', lineHeight: 1.5, marginBottom: 12 }}>
-                {p.programa?.descricao?.substring(0, 100)}...
-              </p>
-              {p.beneficiarios && (
-                <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.2rem', color: 'var(--pci-blue)' }}>
-                  {p.beneficiarios.toLocaleString('pt-BR')}
-                  <span style={{ fontFamily: 'JetBrains Mono', fontWeight: 400, fontSize: '0.65rem', color: 'var(--pci-muted)', marginLeft: 4 }}>
-                    {p.unidade_beneficiarios}
-                  </span>
-                </p>
-              )}
-            </div>
-          ))}
+
+        <div style={{ paddingTop: 40, paddingBottom: 56 }}>
+          <div className="max-w-7xl mx-auto px-6" style={{ marginBottom: 32 }}>
+            <div className="pci-accent-line" />
+            <h2 className="pci-title" style={{ fontSize: '2rem', marginBottom: 8 }}>Urbanismo</h2>
+            <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.88rem', color: 'var(--pci-dim)' }}>
+              Projetos arquitetônicos e intervenções urbanísticas do Programa Cidade Integrada.
+            </p>
+          </div>
+          <DashboardEmbed tipo="urbanismo" />
         </div>
       </section>
 
