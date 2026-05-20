@@ -11,7 +11,7 @@ export default async function HomePage() {
   } catch (e) { console.error(e) }
 
   const territoriosList = [
-    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', descricao: 'Território da Zona Sudoeste do Rio de Janeiro, na Baixada de Jacarepaguá, com intensa expansão urbana e elevada he[...]
+    { nome: 'Cinturão de Jacarepaguá', slug: 'cinturao-jacarepagua', descricao: 'Território da Zona Sudoeste do Rio de Janeiro, na Baixada de Jacarepaguá, com intensa expansão urbana e elevada densidade demográfica.' },
     { nome: 'Pavão-Pavãozinho e Cantagalo', slug: 'ppg', descricao: 'Comunidades da Zona Sul do Rio de Janeiro, entre Copacabana, Ipanema e Lagoa.' },
     { nome: 'Manguinhos e Jacarezinho', slug: 'jacarezinho-manguinhos', descricao: 'Territórios da Zona Norte do Rio de Janeiro, ao longo das linhas férreas e da Avenida Brasil.' },
     { nome: 'Outros — Atuações do PCI', slug: 'outros', descricao: 'Projetos e intervenções do PCI fora dos territórios principais, em diversas regiões do Rio de Janeiro.' },
@@ -106,7 +106,7 @@ export default async function HomePage() {
             <div className="pci-accent-line" />
             <h2 className="pci-title" style={{ fontSize: '2rem', marginBottom: 16 }}>O que é o Programa Cidade Integrada</h2>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 16 }}>
-              O <strong>Programa Cidade Integrada</strong> é uma iniciativa do Governo do Estado do Rio de Janeiro que visa a integração entre bairros formais e informais através de investimentos [...]
+              O <strong>Programa Cidade Integrada</strong> é uma iniciativa do Governo do Estado do Rio de Janeiro que visa a integração entre bairros formais e informais através de investimentos estratégicos.
             </p>
             <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.95rem', color: 'var(--pci-dim)', lineHeight: 1.8, marginBottom: 24 }}>
               O programa atua em territórios historicamente conflagrados do Rio de Janeiro, promovendo o novo ordenamento socioterritorial.
