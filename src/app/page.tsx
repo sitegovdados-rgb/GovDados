@@ -111,9 +111,9 @@ export default function HomePage() {
       {[
         { n: '3', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
         { n: '115', label: 'Serviços', sub: 'registrados nos territórios' },
-        { n: '224mil+', label: 'Atendimentos', sub: 'em serviços pelo PCI' },
+        { n: '224+ mil', label: 'Atendimentos', sub: 'em serviços pelo PCI' },
         { n: '231', label: 'Intervenções', sub: 'urbanísticas registradas' },
-        { n: '76+', label: 'Milhões', sub: 'em recursos captados' },
+        { n: '76+ milhões', label: 'de reais', sub: 'em recursos captados' },
       ].map((item, i) => (
         <div key={i} style={{ padding: '18px 24px', borderRight: i < 4 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
           <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.8rem', color: 'var(--pci-cyan)', lineHeight: 1, marginBottom: 4 }}>{item.n}</p>
