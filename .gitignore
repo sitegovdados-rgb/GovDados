@@ -17,3 +17,12 @@ out/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
+
+# Claude Code local config
+.claude/settings.local.json
+
+# Stray artifacts
+c.charCodeAt(0)))
