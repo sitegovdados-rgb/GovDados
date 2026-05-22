@@ -25,6 +25,9 @@ export const DASHBOARDS = {
   outros: {
     urbanismo: 'https://datastudio.google.com/embed/reporting/7e1fdf9d-1cb4-414d-9749-8e401b4e7a99/page/Wa7xF' + SUFIXO,
   },
+  captacao: {
+    captacaoRecursos: 'https://datastudio.google.com/embed/reporting/8066d558-1d0c-47b4-a753-1785850a7ecd/page/Lv0yF',
+  },
 } as const
 
 export type DashboardUrls = {

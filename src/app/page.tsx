@@ -33,7 +33,7 @@ export default function HomePage() {
           </div>
 
           {/* Cards de territórios */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {territoriosList.map((t) => (
               <div key={t.slug} className="hero-card" style={{
                 background: 'rgba(255,255,255,0.10)',
@@ -69,12 +69,45 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+
+          {/* Card Captação de Recursos */}
+          <div className="hero-card mb-2" style={{
+            background: 'rgba(255,255,255,0.10)',
+            border: '1px solid rgba(255,255,255,0.20)',
+            borderRadius: 12,
+            padding: '20px 22px',
+            transition: 'background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 16,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <span style={{ fontSize: '2rem', lineHeight: 1 }}>💰</span>
+              <div>
+                <h3 style={{ fontFamily: 'Sora', fontWeight: 700, fontSize: '1rem', color: 'white', marginBottom: 4, lineHeight: 1.3 }}>
+                  Captação de Recursos
+                </h3>
+                <p style={{ fontFamily: 'Plus Jakarta Sans', fontSize: '0.78rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, margin: 0 }}>
+                  Veja os recursos captados e investimentos no Programa Cidade Integrada
+                </p>
+              </div>
+            </div>
+            <Link href="/captacao-recursos" style={{
+              fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.78rem',
+              color: 'var(--pci-cyan)', display: 'inline-flex', alignItems: 'center', gap: 4,
+              whiteSpace: 'nowrap',
+            }}>
+              Ver painel →
+            </Link>
+          </div>
         </div>
 
         {/* Métricas */}
         <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
           <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { n: '3', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
                 { n: '115', label: 'Serviços', sub: 'registrados nos territórios' },
