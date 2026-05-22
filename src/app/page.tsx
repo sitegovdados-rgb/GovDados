@@ -105,25 +105,25 @@ export default function HomePage() {
         </div>
 
         {/* Métricas */}
-        <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { n: '3', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
-                { n: '115', label: 'Serviços', sub: 'registrados nos territórios' },
-                { n: '224mil+', label: 'Atendimentos', sub: 'em serviços pelo PCI' },
-                { n: '231', label: 'Intervenções', sub: 'urbanísticas registradas' },
-                { n: '76+', label: 'Milhões', sub: 'em recursos captados' },
-              ].map((item, i) => (
-                <div key={i} style={{ padding: '18px 24px', borderRight: i < 4 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
-                  <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.8rem', color: 'var(--pci-cyan)', lineHeight: 1, marginBottom: 4 }}>{item.n}</p>
-                  <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.8rem', color: 'white', marginBottom: 2 }}>{item.label}</p>
-                  <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.04em' }}>{item.sub}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+<div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', background: 'rgba(0,0,0,0.2)' }}>
+  <div className="max-w-7xl mx-auto px-6">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      {[
+        { n: '3', label: 'Territórios', sub: 'do Programa Cidade Integrada' },
+        { n: '115', label: 'Serviços', sub: 'registrados nos territórios' },
+        { n: '224mil+', label: 'Atendimentos', sub: 'em serviços pelo PCI' },
+        { n: '231', label: 'Intervenções', sub: 'urbanísticas registradas' },
+        { n: '76+', label: 'Milhões', sub: 'em recursos captados' },
+      ].map((item, i) => (
+        <div key={i} style={{ padding: '18px 24px', borderRight: i < 4 ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+          <p style={{ fontFamily: 'Sora', fontWeight: 800, fontSize: '1.8rem', color: 'var(--pci-cyan)', lineHeight: 1, marginBottom: 4 }}>{item.n}</p>
+          <p style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '0.8rem', color: 'white', marginBottom: 2 }}>{item.label}</p>
+          <p style={{ fontFamily: 'JetBrains Mono', fontSize: '0.58rem', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.04em' }}>{item.sub}</p>
         </div>
+      ))}
+    </div>
+  </div>
+</div>
       </section>
 
       {/* ── DASHBOARDS COM ABAS ───────────────────────────────────────── */}
