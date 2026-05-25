@@ -4,7 +4,7 @@ import { useState } from 'react'
 import DashboardEmbed from './DashboardEmbed'
 import type { DashboardUrls } from '@/config/dashboards'
 
-type Aba = 'social' | 'urbanismo'
+type Aba = 'social' | 'urbanismo' | 'sociograficos'
 
 interface Props {
   abas?: Aba[]
@@ -23,6 +23,12 @@ const allTabs = [
     label: 'Urbanismo',
     icon: '🏗️',
     description: 'Projetos arquitetônicos e intervenções urbanísticas do Programa Cidade Integrada.',
+  },
+  {
+    id: 'sociograficos' as Aba,
+    label: 'Dados Sociográficos',
+    icon: '📊',
+    description: 'Indicadores sociográficos e dados demográficos dos territórios do Programa Cidade Integrada.',
   },
 ]
 
@@ -114,6 +120,7 @@ export default function DashboardTabs({ abas, urls }: Props) {
         <div className="dashboard-tab-content">
           {activeTab === 'social' && <DashboardEmbed tipo="social" src={urls?.social} />}
           {activeTab === 'urbanismo' && <DashboardEmbed tipo="urbanismo" src={urls?.urbanismo} />}
+          {activeTab === 'sociograficos' && <DashboardEmbed tipo="social" src={urls?.sociograficos} />}
         </div>
       </div>
     </section>
