@@ -4,7 +4,7 @@ import { useState } from 'react'
 import DashboardEmbed from './DashboardEmbed'
 import type { DashboardUrls } from '@/config/dashboards'
 
-type Aba = 'social' | 'urbanismo' | 'sociograficos'
+type Aba = 'social' | 'urbanismo' | 'sociograficos' | 'diagnostico'
 
 interface Props {
   abas?: Aba[]
@@ -30,10 +30,17 @@ const allTabs = [
     icon: '📊',
     description: 'Indicadores sociográficos e dados demográficos dos territórios do Programa Cidade Integrada.',
   },
+  {
+    id: 'diagnostico' as Aba,
+    label: 'Diagnóstico',
+    icon: '📋',
+    description: 'Diagnóstico territorial do Cinturão de Jacarepaguá.',
+  },
 ]
 
 export default function DashboardTabs({ abas, urls }: Props) {
-  const tabs = abas ? allTabs.filter(t => abas.includes(t.id)) : allTabs
+  const tabs = (abas ? allTabs.filter(t => abas.includes(t.id)) : allTabs)
+    .filter(t => t.id !== 'diagnostico' || !!urls?.diagnostico)
   const [activeTab, setActiveTab] = useState<Aba>(tabs[0].id)
 
   return (
@@ -121,6 +128,26 @@ export default function DashboardTabs({ abas, urls }: Props) {
           {activeTab === 'social' && <DashboardEmbed tipo="social" src={urls?.social} />}
           {activeTab === 'urbanismo' && <DashboardEmbed tipo="urbanismo" src={urls?.urbanismo} />}
           {activeTab === 'sociograficos' && <DashboardEmbed tipo="social" src={urls?.sociograficos} />}
+          {activeTab === 'diagnostico' && urls?.diagnostico && (
+            <div>
+              <DashboardEmbed tipo="social" src={urls.diagnostico.visualizar} />
+              <div className="mt-3 flex justify-end">
+                <a
+                  href={urls.diagnostico.download}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pci-btn inline-flex items-center gap-2 text-sm"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                  </svg>
+                  Baixar versão completa (PDF, ~125 MB)
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </section>

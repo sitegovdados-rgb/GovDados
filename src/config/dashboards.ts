@@ -25,6 +25,10 @@ export const DASHBOARDS = {
     social:         'https://datastudio.google.com/embed/reporting/3cb26321-16eb-4276-9788-d13fd48c55ca/page/oeAvF' + SUFIXO,
     urbanismo:      'https://datastudio.google.com/embed/reporting/1ad720d7-5ce9-4df8-b9ef-15749ecbd5a5/page/Wa7xF' + SUFIXO,
     sociograficos:  'https://datastudio.google.com/embed/reporting/dd68d2df-1c16-4b84-acea-c1f8ad32cf05/page/2p7yF' + SUFIXO,
+    diagnostico: {
+      visualizar: 'https://drive.google.com/file/d/1rTQFX570EXN96XQxZT0Qq0Ea6hAgAF7V/preview',
+      download:   'https://drive.google.com/uc?export=download&id=1Jsxbn405oGOaQkV_33oGF_4BdCuA_wlr',
+    },
   },
   outros: {
     urbanismo: 'https://datastudio.google.com/embed/reporting/7e1fdf9d-1cb4-414d-9749-8e401b4e7a99/page/Wa7xF' + SUFIXO,
@@ -38,4 +42,8 @@ export type DashboardUrls = {
   social?: string
   urbanismo?: string
   sociograficos?: string
+  diagnostico?: {
+    visualizar: string
+    download: string
+  }
 }
