@@ -7,6 +7,7 @@ const SUFIXO = '?params=%7B%22df1%22:%22%22%7D&navigation=hidden'
 
 export const DASHBOARDS = {
   home: {
+    monitoramentoJunho: 'https://datastudio.google.com/embed/reporting/0f9f7382-1243-4dc0-9123-fa8c1a66c07e/page/LA90F' + SUFIXO,
     social:         'https://datastudio.google.com/embed/reporting/0c019ae6-7fb4-4839-8cec-9a3d086c5600/page/oeAvF' + SUFIXO,
     urbanismo:      'https://datastudio.google.com/embed/reporting/dc12a9ee-52fd-4508-9912-d77e20820e82/page/Wa7xF' + SUFIXO,
     sociograficos:  'https://datastudio.google.com/embed/reporting/66b5df75-bd32-4fd2-9364-d66d63471077/page/2p7yF' + SUFIXO,
@@ -39,6 +40,7 @@ export const DASHBOARDS = {
 } as const
 
 export type DashboardUrls = {
+  monitoramentoJunho?: string
   social?: string
   urbanismo?: string
   sociograficos?: string

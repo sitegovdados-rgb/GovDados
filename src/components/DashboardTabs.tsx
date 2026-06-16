@@ -4,7 +4,7 @@ import { useState } from 'react'
 import DashboardEmbed from './DashboardEmbed'
 import type { DashboardUrls } from '@/config/dashboards'
 
-type Aba = 'social' | 'urbanismo' | 'sociograficos' | 'diagnostico'
+type Aba = 'monitoramentoJunho' | 'social' | 'urbanismo' | 'sociograficos' | 'diagnostico'
 
 interface Props {
   abas?: Aba[]
@@ -12,6 +12,12 @@ interface Props {
 }
 
 const allTabs = [
+  {
+    id: 'monitoramentoJunho' as Aba,
+    label: 'Monitoramento Junho',
+    icon: '📅',
+    description: 'Painel de monitoramento do mês de junho do Programa Cidade Integrada.',
+  },
   {
     id: 'social' as Aba,
     label: 'Programas Sociais',
@@ -40,6 +46,7 @@ const allTabs = [
 
 export default function DashboardTabs({ abas, urls }: Props) {
   const tabs = (abas ? allTabs.filter(t => abas.includes(t.id)) : allTabs)
+    .filter(t => t.id !== 'monitoramentoJunho' || !!urls?.monitoramentoJunho)
     .filter(t => t.id !== 'diagnostico' || !!urls?.diagnostico)
   const [activeTab, setActiveTab] = useState<Aba>(tabs[0].id)
 
@@ -125,6 +132,7 @@ export default function DashboardTabs({ abas, urls }: Props) {
         </div>
 
         <div className="dashboard-tab-content">
+          {activeTab === 'monitoramentoJunho' && <DashboardEmbed tipo="social" src={urls?.monitoramentoJunho} />}
           {activeTab === 'social' && <DashboardEmbed tipo="social" src={urls?.social} />}
           {activeTab === 'urbanismo' && <DashboardEmbed tipo="urbanismo" src={urls?.urbanismo} />}
           {activeTab === 'sociograficos' && <DashboardEmbed tipo="social" src={urls?.sociograficos} />}
