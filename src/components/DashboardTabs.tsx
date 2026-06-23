@@ -14,9 +14,9 @@ interface Props {
 const allTabs = [
   {
     id: 'monitoramentoJunho' as Aba,
-    label: 'Monitoramento Junho',
+    label: 'Monitoramento Maio',
     icon: '📅',
-    description: 'Painel de monitoramento do mês de junho do Programa Cidade Integrada.',
+    description: 'Painel de monitoramento do mês de maio do Programa Cidade Integrada.',
   },
   {
     id: 'social' as Aba,
